@@ -38,15 +38,10 @@ class ProductManager {
 
         products.push(producto)
         await fs.promises.writeFile(this.path, JSON.stringify(products, null, 5))
-        return producto} else {
-            return console.log(`Este producto ya existe en el carrito con el ID ${producto.id}`)
+        return producto
+    } else {
+            return console.log(`Este producto con el ID ${producto.id} ya existe`)
         }
-    }
-
-    async createCart (products=[]) {
-
-        
-
     }
 }
 module.exports = { ProductManager}
