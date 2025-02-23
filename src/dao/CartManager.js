@@ -10,22 +10,22 @@ class CartManager {
 
         if (fs.existsSync(this.path)) {
 
-            let ordenes = JSON.stringify(await fs.promises.readFile(this.path, 'utf-8'))
-            return [ordenes]
+            let ordenes = JSON.parse(await fs.promises.readFile(this.path, 'utf-8'))
+            return ordenes
         }
 
     }
 
     async createCart(products = []) {
 
-        let id = 1
+        let cid = 1
 
-        let carrito = { id, products }
+        let carrito = { cid, products }
 
         let ordenes = [...carrito]
 
         if (ordenes.length > 0) {
-            id = id++
+            cid = cid++
         }    
 
         ordenes.push(carrito)

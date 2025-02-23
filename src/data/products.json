@@ -1,0 +1,13 @@
+[
+     {
+          "id": 1,
+          "title": "arroz",
+          "description": "arroz x kg",
+          "code": "001",
+          "price": 7500,
+          "status": null,
+          "stock": "35",
+          "category": "alimentos",
+          "thumbnails": []
+     }
+]

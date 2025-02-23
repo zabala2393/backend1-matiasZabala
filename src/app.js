@@ -20,17 +20,17 @@ app.get('/', (req, res) => {
 app.get("/api/products", async (req, res) => {
 
     let products = await pm.getProducts(this.path)
-    res.send(`Listado de productos: ${products}`)
+    res.send(products)
 
 })
 
 app.get("/api/products/:id", async (req, res) => {
 
-    let {id} = req.params
+    let { id } = req.params
 
     let products = await pm.getProducts(this.path)
 
-    let productById = products.find(p => p.id == id)   
+    let productById = products.find(p => p.id == id)
 
     if (!productById) {
         res.status(404).send(`El producto con el ID ${id} no existe`)
@@ -40,28 +40,38 @@ app.get("/api/products/:id", async (req, res) => {
 
 })
 
-app.post("/api/products", async (req, res) => {
+app.post("/api/products/:", async (req, res) => {
 
-    let products = await pm.getProducts(this.path)
+    let {title, description, code, price, status, stock, category, thumbnails} = req.params
 
-    let productoExiste = products.find(p=>prod.id == producto.id)
+    let products = await pm.getProducts(pm.path)
 
-    
+    let producto = await pm.addProduct(title, description, code, price, status, stock, category, thumbnails)
+
+    products.push(...products, producto)
+
+    res.send(`${producto}`)
+}
+)
+
+app.put("/api/products/:pid:", async (req, res)=>{
+
+    let {pid} = req.params
+
+    let products = await pm.getProducts(pm.path)
+
+    productoModificable = products.find(p=>p.id == pid)   
 
 })
 
-app.post("/:cid/products/:id", async (req,res)=>{
+app.post("/:cid/products/:id", async (req, res) => {
 
-    let carrito = await cm.createCart()
+    let {cid, id} = req.params
 
-    let productoElegido = products.find(p=>p.id == product.id)
+    let products = await pm.getProducts(pm.path)
 
-    let isInCart = carrito.some(p=>p.id == productoElegido.id)
+    let carrito = await cm.createCart(this.path)
 
-    let count = productoElegido.quantity
-
-    if(isInCart) {
-        console.log(`El producto ${productoElegido.title} ya existe en carrito`)
-        return carrito.values(productoElegido.quantity + count)
-    }
+    return carrito
+ 
 })
