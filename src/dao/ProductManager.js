@@ -15,13 +15,14 @@ class ProductManager {
                 console.log(datoLeido)
             }))
             
-            return [products]
+            return products
         } else {
             return ([])
         }
     }
 
     async addProduct(title, description, code, price, status, stock, category, thumbnails=[]) {
+
         let products = await this.getProducts()
 
         let id = 1
@@ -34,7 +35,7 @@ class ProductManager {
             id, title:(''), description:(''),code:(''), price, status, stock:(''), category:(''), thumbnails:[('')]
         }     
 
-        if (products.find(prod=>prod.id == producto.id)){
+        if (products.find(prod=>prod.id !== producto.id)){
 
         products.push(producto)
         await fs.promises.writeFile(this.path, JSON.stringify(products, null, 5))

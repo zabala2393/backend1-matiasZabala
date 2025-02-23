@@ -3,11 +3,8 @@ const ProductManager = require('./dao/ProductManager').ProductManager
 const CartManager = require('./dao/CartManager').CartManager
 
 const cm = new CartManager('./data/carts.json')
-
 const pm = new ProductManager('./data/products.json')
-
 const PORT = 8080
-
 const app = express()
 
 app.listen(PORT, () => {
@@ -23,26 +20,33 @@ app.get('/', (req, res) => {
 app.get("/api/products", async (req, res) => {
 
     let products = await pm.getProducts(this.path)
-
-    res = JSON.stringify(products)
+    res.send(`Listado de productos: ${products}`)
 
 })
 
-app.get("api/products/:id:", async (req, res) => {
+app.get("/api/products/:id", async (req, res) => {
 
-    let productById = await products.find(p => p.id == product.id)
+    let {id} = req.params
+
+    let products = await pm.getProducts(this.path)
+
+    let productById = products.find(p => p.id == id)   
 
     if (!productById) {
-        return res = console.log(`El producto con el ID ${productById.id} no existe`)
+        res.status(404).send(`El producto con el ID ${id} no existe`)
+    } else {
+        res.status(200).send(productById)
     }
 
 })
 
-app.post("api/products", async (req, res) => {
+app.post("/api/products", async (req, res) => {
 
-    let producto = await pm.addProduct()
+    let products = await pm.getProducts(this.path)
+
+    let productoExiste = products.find(p=>prod.id == producto.id)
+
     
-    res.send = (`Producto creado exitosamente con el id ${producto.id}`)
 
 })
 
