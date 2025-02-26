@@ -4,8 +4,12 @@ const CartManager = require('./dao/CartManager').CartManager
 
 const cm = new CartManager('./data/carts.json')
 const pm = new ProductManager('./data/products.json')
+
 const PORT = 8080
 const app = express()
+
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 
 app.listen(PORT, () => {
 
@@ -20,7 +24,7 @@ app.get('/', (req, res) => {
 app.get("/api/products", async (req, res) => {
 
     let products = await pm.getProducts(this.path)
-    res.send(products)
+    res.status(200).json(products)
 
 })
 
@@ -35,43 +39,39 @@ app.get("/api/products/:id", async (req, res) => {
     if (!productById) {
         res.status(404).send(`El producto con el ID ${id} no existe`)
     } else {
-        res.status(200).send(productById)
+        res.status(200).json(productById)
     }
-
 })
 
-app.post("/api/products/:", async (req, res) => {
+app.post("/api/products", async (req, res) => {
 
-    let {title, description, code, price, status, stock, category, thumbnails} = req.params
+    const { title, description, code, price, status, stock, category, thumbnails } = req.body
 
-    let products = await pm.getProducts(pm.path)
+    let productoNuevo = await pm.addProduct(title, description, code, price, status, stock, category, thumbnails)
 
-    let producto = await pm.addProduct(title, description, code, price, status, stock, category, thumbnails)
+    console.log(productoNuevo)
 
-    products.push(...products, producto)
-
-    res.send(`${producto}`)
+    res.setHeader('Content-Type', 'application/json')
+    return res.status(200).json({ payload: `${title} agregado correctamente con el codigo ${code}` })
 }
 )
 
-app.put("/api/products/:pid:", async (req, res)=>{
+app.put("/api/products/:pid:", async (req, res) => {
 
-    let {pid} = req.params
+    let { pid } = req.params
 
     let products = await pm.getProducts(pm.path)
 
-    productoModificable = products.find(p=>p.id == pid)   
+    productoOriginal = products.find(p => p.id == pid)
 
 })
 
 app.post("/:cid/products/:id", async (req, res) => {
 
-    let {cid, id} = req.params
+    let { cid, id } = req.params
 
-    let products = await pm.getProducts(pm.path)
-
-    let carrito = await cm.createCart(this.path)
+    let carrito = await cm.createCart(cm.path)
 
     return carrito
- 
+
 })

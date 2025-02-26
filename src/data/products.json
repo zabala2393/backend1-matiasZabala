@@ -9,5 +9,49 @@
           "stock": "35",
           "category": "alimentos",
           "thumbnails": []
+     },
+     {
+          "id": 2,
+          "title": "manzana",
+          "description": "manzana por kg",
+          "code": "002",
+          "price": 7400,
+          "status": null,
+          "stock": 50,
+          "category": "alimentos",
+          "thumbnails": []
+     },
+     {
+          "id": 3,
+          "title": "banana",
+          "description": "banana por kg",
+          "code": "003",
+          "price": 7300,
+          "status": null,
+          "stock": 45,
+          "category": "alimentos",
+          "thumbnails": []
+     },
+     {
+          "id": 4,
+          "title": "pera",
+          "description": "pera por kg",
+          "code": "004",
+          "price": 5500,
+          "status": null,
+          "stock": 30,
+          "category": "alimentos",
+          "thumbnails": []
+     },
+     {
+          "id": 5,
+          "title": "sandia",
+          "description": "sandia por kg",
+          "code": "005",
+          "price": 6000,
+          "status": null,
+          "stock": 25,
+          "category": "alimentos",
+          "thumbnails": []
      }
 ]
