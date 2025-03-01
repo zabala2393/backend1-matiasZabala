@@ -51,7 +51,7 @@ app.post("/api/products", async (req, res) => {
 
     let agregarProducto = await pm.addProduct(title, description, code, price, status, stock, category, thumbnails)
 
-    let productoDuplicado = products.find(p=>p.code == code)
+    let productoDuplicado = products.find(p => p.code == code)
 
     if (!productoDuplicado) {
 
@@ -68,12 +68,12 @@ app.post("/api/products", async (req, res) => {
 
 app.delete("/api/products/:id", async (req, res) => {
 
-    let { id } = req.params  
+    let { id } = req.params
 
     let products = await pm.getProducts(this.path)
 
-    let productById = products.find(p=>p.id == id)
-    
+    let productById = products.find(p => p.id == id)
+
     if (!productById) {
 
         res.setHeader('Content-Type', 'application/json')
@@ -86,8 +86,6 @@ app.delete("/api/products/:id", async (req, res) => {
         res.status(200).send(` El producto ha sido eliminado correctamente de la base de datos`)
 
     }
-
-
 })
 
 app.put("/api/products/:pid:", async (req, res) => {
@@ -98,18 +96,63 @@ app.put("/api/products/:pid:", async (req, res) => {
 
     let products = await pm.getProducts(pm.path)
 
-    productoOriginal = products.find(p => p.id == pid)
+    let productoOriginal = products.find(p => p.id == pid)
+})
+
+app.post("/api/carts/", async (req, res) => {
+
+    let ordenes = await cm.getOrdenes(this.path)
+
+    let carrito = await cm.createCart()
+
+    res.setHeader('Content-Type', 'application/json')
+    res.status(200).send(`Carrito creado con exito !`)
 
 
+    return carrito
 
 })
 
-app.post("/:cid/products/:id", async (req, res) => {
+app.get("/api/carts/:cid", async (req,res) => {
 
-    let { cid, id } = req.params
+    let { cid } = req.params
 
-    let carrito = await cm.createCart(cm.path)
+    let ordenes = await cm.getOrdenes(this.path)
 
-    return carrito
+    let carritoEncontrado = ordenes.find(c=>c.cid == cid)
+
+    if (carritoEncontrado) {
+
+        res.setHeader('Content-Type', 'application/json')
+        res.status(200).json(carritoEncontrado.products)
+        
+    } else {
+
+        res.setHeader('Content-Type', 'application/json')
+        res.status(404).send(`El carrito con el CID ${cid} no existe`)
+    }
+})
+
+app.post("/:cid/product/:pid", async (req, res)=>{
+
+    let { cid, pid } = req.params
+
+    let ordenes = await cm.getOrdenes(this.path)
+
+    let products = await pm.getProducts(this.path)
+
+    let carritoObjetivo = ordenes.find(cart=>cart.cid == cid)
+
+    let productoObjetivo = products.find(p=>p.id == pid)
+
+    if (carritoObjetivo && productoObjetivo) {
+
+        
+
+
+
+    } else {
+
+    }
 
 })
