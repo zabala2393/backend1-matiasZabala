@@ -18,6 +18,27 @@ class ProductManager {
         }
     }
 
+    async deleteProduct(id) {
+
+        let products = await this.getProducts(this.path)
+
+        let productById = products.find(p=>p.id == id)
+
+        let productToDelete = products.indexOf(productById)
+
+        if (!productById) {         
+
+            return (`El producto con ID ${id} no existe en la base de datos`)
+
+        } else {
+
+            products.splice(productToDelete, 1)
+            await fs.promises.writeFile(this.path, JSON.stringify(products, null, 5))
+            return productToDelete          
+
+        }
+    }
+
     async addProduct(title, description, code, price, status, stock, category, thumbnails = []) {
 
         let products = await this.getProducts(this.path)    
