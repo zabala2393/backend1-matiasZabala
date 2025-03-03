@@ -88,7 +88,7 @@ app.delete("/api/products/:id", async (req, res) => {
     }
 })
 
-app.put("/api/products/:pid:", async (req, res) => {
+app.put("/api/products/:pid", async (req, res) => {
 
     let { pid } = req.params
 
@@ -96,7 +96,15 @@ app.put("/api/products/:pid:", async (req, res) => {
 
     let products = await pm.getProducts(pm.path)
 
-    let productoOriginal = products.find(p => p.id == pid)
+    let productoOriginal = products[pid]
+
+    let productoModificado = await pm.changeProduct(title, description, code, price, status, stock, category, thumbnails)
+
+    if (productoOriginal) {
+        res.setHeader('Content-Type', 'application/json')
+        res.status(200).json({title, description, code, price, status, stock, category, thumbnails})
+        return productoModificado
+    }
 })
 
 app.post("/api/carts/", async (req, res) => {
@@ -108,24 +116,23 @@ app.post("/api/carts/", async (req, res) => {
     res.setHeader('Content-Type', 'application/json')
     res.status(200).send(`Carrito creado con exito !`)
 
-
     return carrito
 
 })
 
-app.get("/api/carts/:cid", async (req,res) => {
+app.get("/api/carts/:cid", async (req, res) => {
 
     let { cid } = req.params
 
     let ordenes = await cm.getOrdenes(this.path)
 
-    let carritoEncontrado = ordenes.find(c=>c.cid == cid)
+    let carritoEncontrado = ordenes.find(c => c.cid == cid)
 
     if (carritoEncontrado) {
 
         res.setHeader('Content-Type', 'application/json')
         res.status(200).json(carritoEncontrado.products)
-        
+
     } else {
 
         res.setHeader('Content-Type', 'application/json')
@@ -133,7 +140,7 @@ app.get("/api/carts/:cid", async (req,res) => {
     }
 })
 
-app.post("/:cid/product/:pid", async (req, res)=>{
+app.post("/:cid/product/:pid", async (req, res) => {
 
     let { cid, pid } = req.params
 
@@ -141,18 +148,22 @@ app.post("/:cid/product/:pid", async (req, res)=>{
 
     let products = await pm.getProducts(this.path)
 
-    let carritoObjetivo = ordenes.find(cart=>cart.cid == cid)
+    let productoObjetivo = products.find(p => p.id == pid)
 
-    let productoObjetivo = products.find(p=>p.id == pid)
+    let carritoObjetivo = ordenes.find(cart => cart.cid == cid)
 
-    if (carritoObjetivo && productoObjetivo) {
+    let agregarProducto = await cm.addToCart(carritoObjetivo, productoObjetivo)
 
-        
+    if (!productoObjetivo || !carritoObjetivo) {
 
-
+        res.setHeader('Content-Type', 'application/json')
+        res.status(404).send('El carrito/producto no es correcto. Por favor, revise los datos')
+        return
 
     } else {
 
+        res.setHeader('Content-Type', 'application/json')
+        res.status(200).send(`${productoObjetivo.title} agregado al carrito ${carritoObjetivo.cid} correctamente`)
+        return agregarProducto
     }
-
 })

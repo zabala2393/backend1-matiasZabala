@@ -1,4 +1,6 @@
 const fs = require('fs')
+const { ProductManager } = require('./ProductManager')
+const pm = new ProductManager
 
 class CartManager {
 
@@ -20,17 +22,21 @@ class CartManager {
 
     }
 
-    async addToCart(product, quantity) {
+    async addToCart(carritoObjetivo, productoObjetivo) {
+     
+        if (carritoObjetivo && productoObjetivo) {
 
-        let ordenes = await this.getOrdenes(this.path)
+            let carritoProducts = carritoObjetivo.products
 
-        let products = await this.getProducts(this.path)
-
-        
-
-
-
-
+            carritoProducts.push(productoObjetivo)
+            await fs.promises.writeFile(this.path, JSON.stringify(carritoProducts, null, 5 ))
+            return carritoObjetivo.products
+    
+        } else if (!productoObjetivo || !carritoObjetivo) {
+    
+            return (`El carrito/producto no existe. Por favor revise los datos`)
+    
+        }
 
     }
 

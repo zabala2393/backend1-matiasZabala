@@ -66,5 +66,24 @@ class ProductManager {
             return `El producto ${productoExiste.title} ya existe con el id ${productoExiste.id}`
         }        
     }
+
+    async changeProduct(title, description, code, price, status, stock, category, thumbnails) {
+
+        let products = await this.getProducts(this.path)
+        
+        let productoOriginal = products.find(p=>p.title == title)
+
+        let productoModificado = {title, description, code, price, status, category, stock, thumbnails}
+
+        if(productoOriginal) {
+            await fs.promises.writeFile(this.path, JSON.stringify(products.indexOf(productoModificado), null, 5))
+            return productoModificado
+        } else {
+
+            res.status(200).send(`El producto ${title} no existe en la base de datos`)
+
+        }
+
+    }
 }
 module.exports = { ProductManager }
