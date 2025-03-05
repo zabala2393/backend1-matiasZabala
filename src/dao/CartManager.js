@@ -29,7 +29,7 @@ class CartManager {
             let carritoProducts = carritoObjetivo.products
 
             carritoProducts.push(productoObjetivo)
-            await fs.promises.writeFile(this.path, JSON.stringify(carritoProducts, null, 5 ))
+            await fs.promises.writeFile(this.path, JSON.stringify(ordenes, null, 5 ))
             return carritoObjetivo.products
     
         } else if (!productoObjetivo || !carritoObjetivo) {

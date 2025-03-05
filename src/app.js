@@ -51,7 +51,7 @@ app.post("/api/products", async (req, res) => {
 
     let agregarProducto = await pm.addProduct(title, description, code, price, status, stock, category, thumbnails)
 
-    let productoDuplicado = products.find(p => p.code == code)
+    let productoDuplicado = products.find(p => p.title.toLowerCase() == title.toLowerCase())
 
     if (!productoDuplicado) {
 
@@ -90,22 +90,43 @@ app.delete("/api/products/:id", async (req, res) => {
 
 app.put("/api/products/:pid", async (req, res) => {
 
-    let { pid } = req.params
+    let { pid } = req.params 
 
-    let { title, description, code, price, status, stock, category, thumbnails } = req.body
+    let { title, description, code, price, status, category, stock, thumbnails } = req.body
 
-    let products = await pm.getProducts(pm.path)
+    let products = await pm.getProducts()
 
-    let productoOriginal = products[pid]
+    let productoOriginal = products.find(p => p.id == pid)
 
-    let productoModificado = await pm.changeProduct(title, description, code, price, status, stock, category, thumbnails)
+    let indiceProducto = products.indexOf(productoOriginal) 
 
-    if (productoOriginal) {
-        res.setHeader('Content-Type', 'application/json')
-        res.status(200).json({title, description, code, price, status, stock, category, thumbnails})
-        return productoModificado
+    if (indiceProducto <= -1) {
+
+        return res.status(404).send(`No existe un producto con el ID ${pid}`)
+
     }
-})
+
+    let id = pid
+
+    let aModificar = {title, description, price, stock}
+
+    if (title && description && price && stock) {
+
+    let modificarProducto = await pm.changeProduct(pid, aModificar)
+
+} else {
+
+    return res.status(400).send(`Faltan propiedades a modificar! Ingrese title, description, price y stock`)
+}
+
+    if (aModificar) {
+
+        return res.status(200).send(`Producto ${productoOriginal.title} modificado con exito`)
+    
+        
+    }
+}
+)
 
 app.post("/api/carts/", async (req, res) => {
 
