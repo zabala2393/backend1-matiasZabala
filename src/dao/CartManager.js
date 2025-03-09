@@ -23,14 +23,22 @@ class CartManager {
     }
 
     async addToCart(carritoObjetivo, productoObjetivo) {
+
+        let ordenes = await this.getOrdenes(this.path)       
+
+        let indiceCarrito = ordenes.findIndex(c=>c.cid==carritoObjetivo.cid)
+
+        let cid = carritoObjetivo.cid
+        
+        let products = carritoObjetivo.products
+
+        let agregarProducto = products.push(productoObjetivo)
      
         if (carritoObjetivo && productoObjetivo) {
 
-            let carritoProducts = carritoObjetivo.products
 
-            carritoProducts.push(productoObjetivo)
             await fs.promises.writeFile(this.path, JSON.stringify(ordenes, null, 5 ))
-            return carritoObjetivo.products
+            return agregarProducto
     
         } else if (!productoObjetivo || !carritoObjetivo) {
     
