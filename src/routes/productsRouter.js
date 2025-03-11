@@ -32,7 +32,7 @@ router.post("/", async (req, res) => {
 
     let agregarProducto = await pm.addProduct(title, description, code, price, status, stock, category, thumbnails)
 
-    let productoDuplicado = products.find(p => p.title.toLowerCase() == title.toLowerCase())
+    let productoDuplicado = products.find(p => p.code.toLowerCase() == code.toLowerCase())
 
     if (!productoDuplicado) {
 

@@ -1,12 +1,13 @@
 {
   "dependencies": {
     "express": "^4.21.2",
-    "fs": "^0.0.1-security"
+    "express-handlebars": "^8.0.1",
+    "fs": "^0.0.1-security",
+    "socket.io": "^4.8.1"
   },
   "name": "src",
   "version": "1.0.0",
   "main": "app.js",
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

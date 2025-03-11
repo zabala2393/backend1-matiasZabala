@@ -1,6 +1,4 @@
 const fs = require('fs')
-const { ProductManager } = require('./ProductManager')
-const pm = new ProductManager
 
 class CartManager {
 

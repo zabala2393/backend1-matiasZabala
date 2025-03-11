@@ -1,4 +1,9 @@
-const express = require('express')
+const express = require("express")
+const app = express()
+const {Server} = require('socket.io')
+const {engine} = require('express-handlebars')
+
+
 const ProductManager = require('./dao/ProductManager').ProductManager
 const CartManager = require('./dao/CartManager').CartManager
 
@@ -6,22 +11,30 @@ const cm = new CartManager('./data/carts.json')
 const pm = new ProductManager('./data/products.json')
 const productsRouter = require('./routes/productsRouter')
 const cartsRouter = require('./routes/cartsRouter')
+const viewsRouter = require('./routes/viewsRouter')
+const { log, errorhandler } = require("./middlewares/errorHandler")
 
 const PORT = 8080
-const app = express()
-
-app.use("/api/products", productsRouter)
-app.use("/api/carts", cartsRouter)
-
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+app.use(express.static("./src/public"))
+app.engine('handlebars', engine())
+app.set("view engine", "handlebars")
+app.set("views", './src/views')
+app.use(log)
 
-app.listen(PORT, () => {
+app.use("/api/products", productsRouter)
+app.use("/api/carts", cartsRouter)
+app.use("/", viewsRouter)
+
+const serverHttp = app.listen(PORT, () => {
 
     console.log(`Servidor listo en puerto ${PORT}`)
 
 })
+
+const io = new Server(serverHttp)
 
 app.get('/', (req, res) => {
     res.send('Bienvenidos!!')
@@ -54,3 +67,5 @@ app.post("/:cid/product/:pid", async (req, res) => {
         return agregarProducto
     }
 })
+
+app.use(errorhandler)
