@@ -1,18 +1,14 @@
 const express = require("express")
+const { Server } = require('socket.io')
+const { engine } = require('express-handlebars')
+const path = require('path')
 const app = express()
-const {Server} = require('socket.io')
-const {engine} = require('express-handlebars')
+let io = undefined
 
-
-const ProductManager = require('./dao/ProductManager').ProductManager
-const CartManager = require('./dao/CartManager').CartManager
-
-const cm = new CartManager('./data/carts.json')
-const pm = new ProductManager('./data/products.json')
-const productsRouter = require('./routes/productsRouter')
-const cartsRouter = require('./routes/cartsRouter')
-const viewsRouter = require('./routes/viewsRouter')
-const { log, errorhandler } = require("./middlewares/errorHandler")
+const productsRouter = require('./routes/productsRouter.js')
+const cartsRouter = require('./routes/cartsRouter.js')
+const viewsRouter = require('./routes/viewsRouter.js')
+const { errorhandler } = require("./middlewares/errorHandler")
 
 const PORT = 8080
 
@@ -21,12 +17,19 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.static("./src/public"))
 app.engine('handlebars', engine())
 app.set("view engine", "handlebars")
-app.set("views", './src/views')
-app.use(log)
+app.set("views", path.join(__dirname, '/views'))
 
 app.use("/api/products", productsRouter)
 app.use("/api/carts", cartsRouter)
 app.use("/", viewsRouter)
+app.use('/api/products', (req, res, next) => {
+
+    req.io = io
+
+    next()
+},
+    productsRouter
+)
 
 const serverHttp = app.listen(PORT, () => {
 
@@ -34,38 +37,30 @@ const serverHttp = app.listen(PORT, () => {
 
 })
 
-const io = new Server(serverHttp)
+io = new Server(serverHttp)
 
 app.get('/', (req, res) => {
+
     res.send('Bienvenidos!!')
+
 })
 
-app.post("/:cid/product/:pid", async (req, res) => {
+io.on('connection', socket => {
 
-    let { cid, pid } = req.params
+    console.log(`Se ha conectado un usuario con id ${socket.id}`)
+    socket.emit("saludo", "Bienvenido!!")
 
-    let ordenes = await cm.getOrdenes(this.path)
+    socket.broadcast.emit(`${socket.id} se ha conectado al servidor`)
 
-    let products = await pm.getProducts(this.path)
-
-    let productoObjetivo = products.find(p => p.id == pid)
-
-    let carritoObjetivo = ordenes.find(cart => cart.cid == cid)
-
-    let agregarProducto = await cm.addToCart(carritoObjetivo, productoObjetivo)
-
-    if (!productoObjetivo || !carritoObjetivo) {
-
-        res.setHeader('Content-Type', 'application/json')
-        res.status(404).send('El carrito/producto no es correcto. Por favor, revise los datos')
-        return
-
-    } else {
-
-        res.setHeader('Content-Type', 'application/json')
-        res.status(200).send(`${productoObjetivo.title} agregado al carrito ${carritoObjetivo.cid} correctamente`)
-        return agregarProducto
-    }
 })
+
+io.on("agregarProducto", producto => {
+
+    console.log(`${producto.title} creado`)
+    socket.emit("agregarProducto", `Producto nuevo creado con el ID ${producto.id}`)
+
+})
+
+
 
 app.use(errorhandler)

@@ -2,6 +2,10 @@ const Router = require('express').Router
 
 const router = Router()
 
+const ProductManager = require('../dao/ProductManager').ProductManager
+
+const pm = new ProductManager('./data/products.json')
+
 router.get('/', async(req,res)=>{
 
     let products = await pm.getProducts(this.path)
@@ -26,11 +30,13 @@ router.get("/:id", async (req, res) => {
 
 router.post("/", async (req, res) => {
 
-    const { title, description, code, price, status, stock, category, thumbnails } = req.body
+    const { title, description, code, price, status, stock, category, thumbnails } = req.body    
 
     let products = await pm.getProducts(this.path)
 
     let agregarProducto = await pm.addProduct(title, description, code, price, status, stock, category, thumbnails)
+
+    req.socket.emit("agregarProducto", agregarProducto)
 
     let productoDuplicado = products.find(p => p.code.toLowerCase() == code.toLowerCase())
 
@@ -42,7 +48,7 @@ router.post("/", async (req, res) => {
     } else {
 
         res.setHeader('Content-Type', 'application/json')
-        return res.status(400).json({ payload: `Este producto ya existe en la base de datos` })
+        return res.status(400).json({ payload: `Ya existe en la base de datos un producto con codigo ${code}` })
     }
 }
 )

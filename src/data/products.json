@@ -63,5 +63,27 @@
           "stock": 40,
           "category": "alimentos",
           "thumbnails": []
+     },
+     {
+          "id": 10,
+          "title": "zapallo",
+          "description": "zapallo por kg",
+          "code": "012",
+          "price": 3500,
+          "status": null,
+          "stock": 25,
+          "category": "alimentos",
+          "thumbnails": []
+     },
+     {
+          "id": 11,
+          "title": "uvas",
+          "description": "uvas por kg",
+          "code": "026",
+          "price": 3800,
+          "status": null,
+          "stock": 50,
+          "category": "alimentos",
+          "thumbnails": []
      }
 ]

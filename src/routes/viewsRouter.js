@@ -1,9 +1,9 @@
 const Router = require('express').Router
 const router = Router()
 
-router.get('/pruebas', (req,res)=>{
+router.get('/realtimeproducts', (req,res)=>{
 
-    res.render("ejemplo")
+    res.render("realTimeProducts")
 
 })
 

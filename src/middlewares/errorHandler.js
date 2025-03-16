@@ -1,8 +1,3 @@
-const log=(req,res,next)=>{
-    
-    next()
-}
-
 const errorhandler=(error, req,res,next)=>{
 
     console.log(`Error: ${error.message}`)
@@ -16,4 +11,4 @@ const errorhandler=(error, req,res,next)=>{
     )
 }
 
-module.exports={log, errorhandler}
+module.exports={errorhandler}
