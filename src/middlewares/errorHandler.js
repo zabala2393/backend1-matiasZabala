@@ -1,4 +1,4 @@
-const errorhandler=(error, req,res,next)=>{
+const errorhandler=(error, req , res , next)=>{
 
     console.log(`Error: ${error.message}`)
     res.setHeader('Content-Type', 'application/json')
@@ -6,7 +6,7 @@ const errorhandler=(error, req,res,next)=>{
 
         {
             error: `Error inesperado en el servidor - Intente mas tarde o contacte a su proovedor`,
-            detalle: `${error.messagee}`
+            detalle: `${error.message}`
         }
     )
 }

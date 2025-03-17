@@ -36,9 +36,9 @@ router.post("/", async (req, res) => {
 
     let agregarProducto = await pm.addProduct(title, description, code, price, status, stock, category, thumbnails)
 
-    req.io.emit("agregarProducto", product)
+    req.io.emit("agregarProducto", agregarProducto)
 
-    let productoDuplicado = products.find(p => p.code.toLowerCase() == code.toLowerCase())
+    let productoDuplicado = products.find(p => p.code == code)
 
     if (!productoDuplicado) {
 
@@ -58,6 +58,8 @@ router.delete("/:id", async (req, res) => {
     let { id } = req.params
 
     let products = await pm.getProducts(this.path)
+
+    req.io.emit("quitarProducto", productById)
 
     let productById = products.find(p => p.id == id)
 
