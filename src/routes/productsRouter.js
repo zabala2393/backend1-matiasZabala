@@ -36,14 +36,14 @@ router.post("/", async (req, res) => {
 
     let agregarProducto = await pm.addProduct(title, description, code, price, status, stock, category, thumbnails)
 
-    req.socket.emit("agregarProducto", agregarProducto)
+    req.io.emit("agregarProducto", product)
 
     let productoDuplicado = products.find(p => p.code.toLowerCase() == code.toLowerCase())
 
     if (!productoDuplicado) {
 
         res.setHeader('Content-Type', 'application/json')
-        return res.status(200).json({ payload: `${title} agregado correctamente con el codigo ${code}` })
+        return res.status(200).json(agregarProducto)
 
     } else {
 

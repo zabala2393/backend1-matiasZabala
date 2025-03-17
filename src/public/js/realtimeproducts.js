@@ -1,10 +1,11 @@
 const socket = io()
 
 socket.on("saludo", ()=>{
-    socket.emit("saludo", `Usuario nuevo se ha conectado`)
+    alert(`Bienvenido al sistema`)
 })
 
 socket.on("agregarProducto", producto=>{
-    socket.emit("agregarProducto", `Producto nuevo creado con el id ${producto.id}`)
-})
 
+    window.location.reload()
+    alert(`Producto nuevo ${producto.title} creado con el id ${producto.id}`)
+})

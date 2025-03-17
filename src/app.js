@@ -14,22 +14,20 @@ const PORT = 8080
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use(express.static("./src/public"))
+app.use(express.static('public'))
 app.engine('handlebars', engine())
 app.set("view engine", "handlebars")
 app.set("views", path.join(__dirname, '/views'))
 
-app.use("/api/products", productsRouter)
+app.use("/api/products", (req, res, next)=>{
+    req.io=io
+    next()
+} 
+,productsRouter
+)
 app.use("/api/carts", cartsRouter)
 app.use("/", viewsRouter)
-app.use('/api/products', (req, res, next) => {
 
-    req.io = io
-
-    next()
-},
-    productsRouter
-)
 
 const serverHttp = app.listen(PORT, () => {
 
@@ -48,7 +46,7 @@ app.get('/', (req, res) => {
 io.on('connection', socket => {
 
     console.log(`Se ha conectado un usuario con id ${socket.id}`)
-    socket.emit("saludo", "Bienvenido!!")
+    socket.emit("saludo", "mensaje")
 
     socket.broadcast.emit(`${socket.id} se ha conectado al servidor`)
 

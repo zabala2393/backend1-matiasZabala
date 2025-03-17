@@ -85,5 +85,27 @@
           "stock": 50,
           "category": "alimentos",
           "thumbnails": []
+     },
+     {
+          "id": 12,
+          "title": "mango",
+          "description": "mango por kg",
+          "code": "045",
+          "price": 4000,
+          "status": null,
+          "stock": 20,
+          "category": "alimentos",
+          "thumbnails": []
+     },
+     {
+          "id": 13,
+          "title": "frutilla",
+          "description": "frutilla por kg",
+          "code": "060",
+          "price": 3700,
+          "status": null,
+          "stock": 25,
+          "category": "alimentos",
+          "thumbnails": []
      }
 ]
