@@ -6,15 +6,15 @@
 
 <form id="nuevoProducto" action="/realtimeproducts" method="post">
 
-<input type="string" name="title" id="title" placeholder="title" required> 
-<input type="string" name="description" id="description" placeholder="description" required>
-<input type="number" name="code" id="code" placeholder="code" required>
-<input type="number" name="price" id="price" placeholder="price" required>
-<input type="boolean" name="status" id="status" placeholder="status" required>
-<input type="number" name="stock" id="stock" placeholder="stock" required> 
-<input type="string" name="category" id="category" placeholder="category" required>
-<input type="object" name="thumbnails" id="thumbnails" placeholder="thumbnails">
-<button type="submit">Cargar producto</button>
+    <input type="string" name="title" id="title" placeholder="title" required>
+    <input type="string" name="description" id="description" placeholder="description" required>
+    <input type="number" name="code" id="code" placeholder="code" required>
+    <input type="number" name="price" id="price" placeholder="price" required>
+    <input type="boolean" name="status" id="status" placeholder="status" required>
+    <input type="number" name="stock" id="stock" placeholder="stock" required>
+    <input type="string" name="category" id="category" placeholder="category" required>
+    <input type="object" name="thumbnails" id="thumbnails" placeholder="thumbnails">
+    <button type="submit">Cargar producto</button>
 
 </form>
 
@@ -22,13 +22,15 @@
 
     {{#each products}}
 
-    <li id="productItem"> 
+    <li id="productItem">
 
         Nombre: {{title}} <br>
         Precio: ${{price}} <br>
         Categoria: {{category}} <br>
-        
-        <button type="submit" action="/realtimeproducts" id="quitarProducto" method="delete" >Quitar producto</button></li>
+
+        <button type="submit" action="/realtimeproducts" id="quitarProducto" method="delete">Quitar producto</button>
+
+    </li>
 
     {{/each}}
 
@@ -36,6 +38,3 @@
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/realtimeproducts.js"></script>
-
-
-
