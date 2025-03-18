@@ -107,5 +107,104 @@
           "stock": 25,
           "category": "alimentos",
           "thumbnails": []
+     },
+     {
+          "id": 14,
+          "title": "mandarina",
+          "description": "mandarina por kg",
+          "code": "067",
+          "price": 3000,
+          "status": null,
+          "stock": 30,
+          "category": "alimentos",
+          "thumbnails": []
+     },
+     {
+          "id": 15,
+          "title": "zapallo zuccini",
+          "description": "zapallo zuccini por kg",
+          "code": "078",
+          "price": 3000,
+          "status": null,
+          "stock": 45,
+          "category": "alimentos",
+          "thumbnails": []
+     },
+     {
+          "id": 16,
+          "title": "cebolla morada",
+          "description": "cebolla morada por kg",
+          "code": "096",
+          "price": 3900,
+          "status": null,
+          "stock": 62,
+          "category": "alimentos",
+          "thumbnails": []
+     },
+     {
+          "id": 17,
+          "title": "zapallo anco",
+          "description": "zapallo anco x kg",
+          "code": "240",
+          "price": "5000",
+          "status": "null",
+          "stock": "43",
+          "category": "alimentos",
+          "thumbnails": ""
+     },
+     {
+          "id": 18,
+          "title": "frambuesas",
+          "description": "bandeja de frambuesas",
+          "code": "450",
+          "price": "6000",
+          "status": "null",
+          "stock": "40",
+          "category": "alimentos",
+          "thumbnails": ""
+     },
+     {
+          "id": 19,
+          "title": "anana",
+          "description": "anana x kg",
+          "code": "460",
+          "price": "5700",
+          "status": "null",
+          "stock": "40",
+          "category": "alimentos",
+          "thumbnails": ""
+     },
+     {
+          "id": 20,
+          "title": "remolacha",
+          "description": "remolacha x kg",
+          "code": "457",
+          "price": "3400",
+          "status": "null",
+          "stock": "43",
+          "category": "alimentos",
+          "thumbnails": ""
+     },
+     {
+          "id": 21,
+          "title": "maple de huevos",
+          "description": "huevos x 30 unidades",
+          "code": "451",
+          "price": "5000",
+          "status": "null",
+          "stock": "100",
+          "category": "alimentos",
+          "thumbnails": " "
+     },
+     {
+          "id": 22,
+          "title": "banana oferta",
+          "description": "banana para licuado x kg",
+          "code": "403",
+          "price": "2500",
+          "status": "null",
+          "stock": "40",
+          "category": "alimentos",
+          "thumbnails": ""
      }
 ]

@@ -1,26 +1,29 @@
 const socket = io()
 
-socket.on("saludo", ()=>{
+socket.on("saludo", () => {
     alert(`Bienvenido al sistema`)
 })
 
-socket.on("agregarProducto", agregarProducto=>{
-    window.location.reload()
+socket.on("agregarProducto", agregarProducto => {
+    
     alert(`Producto nuevo ${agregarProducto.title} creado con el id ${agregarProducto.id}`)
-})
-
-socket.on("quitarProducto", productById=>{
     window.location.reload()
-    alert(`Producto ${productById.title} elimina de la base de datos exitosamente`)
 })
 
-let botonQuitar = document.querySelectorAll("quitarProducto")
-let formInfo = document.getElementById("nuevoProducto")
-let formInputs = document.querySelectorAll("input")
+socket.on("quitarProducto", productToDelete => {
+    
+    alert(`Producto ${productToDelete.title} eliminado de la base de datos exitosamente`)
+    window.location.reload()
+})
 
-formInfo.addEventListener("submit", async (e)=>{
+socket.on("errorCarga1", codigoDuplicado=>{
 
-    console.log(formInfo)
-    e.preventDefault();
-    onclick = await pm.addProduct(input.title, input.description, input.code, input.price, input.status, input.stock, input.category, input.thumbnails)
+    alert(`Ya existe en la base de datos un producto con codigo similar : ${codigoDuplicado}`)
+    window.location.reload()
+})
+
+socket.on("errorCarga2", productoDuplicado=>{
+
+    alert(`Ya existe un producto con ese nombre ${productoDuplicado}`)
+    window.location.reload()
 })

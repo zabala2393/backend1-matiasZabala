@@ -67,4 +67,5 @@ router.post("/:cid/product/:pid", async (req, res) => {
         return agregarProducto
     }
 })
+
 module.exports=router

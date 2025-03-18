@@ -26,7 +26,10 @@ app.use("/api/products", (req, res, next)=>{
 ,productsRouter
 )
 app.use("/api/carts", cartsRouter)
-app.use("/", viewsRouter)
+app.use("/", (req,res, next)=>{
+    req.io=io
+    next()
+}, viewsRouter)
 
 
 const serverHttp = app.listen(PORT, () => {
@@ -37,16 +40,9 @@ const serverHttp = app.listen(PORT, () => {
 
 io = new Server(serverHttp)
 
-app.get('/', (req, res) => {
-
-    res.send('Bienvenidos!!')
-
-})
-
 io.on('connection', socket => {
 
     console.log(`Se ha conectado un usuario con id ${socket.id}`)
-    socket.emit("saludo", "mensaje")
 
     socket.broadcast.emit(`${socket.id} se ha conectado al servidor`)
 
@@ -55,10 +51,12 @@ io.on('connection', socket => {
 io.on("agregarProducto", producto => {
 
     console.log(`${producto.title} creado`)
-    socket.emit("agregarProducto", `Producto nuevo creado con el ID ${producto.id}`)
+    socket.emit("agregarProducto", producto)
 
 })
 
-
+io.on("quitarProducto", producto=>{
+    socket.emit("quitarProducto", producto)
+})
 
 app.use(errorhandler)

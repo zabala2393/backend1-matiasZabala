@@ -38,9 +38,11 @@ router.post("/", async (req, res) => {
 
     req.io.emit("agregarProducto", agregarProducto)
 
-    let productoDuplicado = products.find(p => p.code == code)
+    let codigoDuplicado = products.find(p => p.code == code)
 
-    if (!productoDuplicado) {
+    let productoDuplicado = products.find(p=>p.title.toLowerCase() == title.toLowerCase())
+
+    if (!productoDuplicado || !codigoDuplicado) {
 
         res.setHeader('Content-Type', 'application/json')
         return res.status(200).json(agregarProducto)
@@ -59,9 +61,9 @@ router.delete("/:id", async (req, res) => {
 
     let products = await pm.getProducts(this.path)
 
-    req.io.emit("quitarProducto", productById)
-
     let productById = products.find(p => p.id == id)
+
+    req.io.emit("quitarProducto", productById)
 
     if (!productById) {
 

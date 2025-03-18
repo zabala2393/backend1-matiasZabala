@@ -1,34 +1,41 @@
-<h2>Productos</h2>
+<h2>Inventario</h2>
 
 <hr>
+
+<h1>Ingreso de productos nuevos</h1>
+
+<form id="nuevoProducto" action="/realtimeproducts" method="post">
+
+<input type="string" name="title" id="title" placeholder="title" required> 
+<input type="string" name="description" id="description" placeholder="description" required>
+<input type="number" name="code" id="code" placeholder="code" required>
+<input type="number" name="price" id="price" placeholder="price" required>
+<input type="boolean" name="status" id="status" placeholder="status" required>
+<input type="number" name="stock" id="stock" placeholder="stock" required> 
+<input type="string" name="category" id="category" placeholder="category" required>
+<input type="object" name="thumbnails" id="thumbnails" placeholder="thumbnails">
+<button type="submit">Cargar producto</button>
+
+</form>
 
 <ul>
 
     {{#each products}}
 
-    <li id="productItem"> {{title}} <button id="quitarProducto">Quitar producto</button></li>
+    <li id="productItem"> 
+
+        Nombre: {{title}} <br>
+        Precio: ${{price}} <br>
+        Categoria: {{category}} <br>
+        
+        <button type="submit" action="/realtimeproducts" id="quitarProducto" method="delete" >Quitar producto</button></li>
 
     {{/each}}
 
 </ul>
 
-<h1>Ingreso de productos nuevos</h1>
-
-<form id="nuevoProducto" action="">
-
-<input type="string" class="title" placeholder="title"> 
-<input type="string" class="description" placeholder="description">
-<input type="number" class="code" placeholder="code">
-<input type="number" class="price" placeholder="price">
-<input type="boolean" class="status" placeholder="status">
-<input type="number" class="stock" placeholder="stock">
-<input type="string" class="category" placeholder="category">
-<input type="object" class="thumbnails" placeholder="thumbnails">
-<button type="submit">Cargar producto</button>
-
-</form>
-
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/realtimeproducts.js"></script>
+
 
 
