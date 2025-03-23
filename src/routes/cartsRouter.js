@@ -4,12 +4,23 @@ const router = Router()
 const ProductManager = require('../dao/ProductManager').ProductManager
 const CartManager = require('../dao/CartManager').CartManager
 
-const cm = new CartManager('./data/carts.json')
-const pm = new ProductManager('./data/products.json')
+const cm = new CartManager('./src/data/carts.json')
+const pm = new ProductManager('./src/data/products.json')
+
+
+router.get("/", async (req, res)=>{
+
+    let ordenes = await cm.getOrdenes()
+
+    res.setHeader('Content-Type', 'application/json')
+    res.status(200).json(ordenes)
+    return ordenes
+
+})
 
 router.post("/", async (req, res) => {
 
-    let ordenes = await cm.getOrdenes(this.path)
+    let ordenes = await cm.getOrdenes()
 
     let carrito = await cm.createCart()
 
@@ -24,7 +35,7 @@ router.get("/:cid", async (req, res) => {
 
     let { cid } = req.params
 
-    let ordenes = await cm.getOrdenes(this.path)
+    let ordenes = await cm.getOrdenes()
 
     let carritoEncontrado = ordenes.find(c => c.cid == cid)
 

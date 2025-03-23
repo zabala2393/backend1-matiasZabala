@@ -1,7 +1,15 @@
 const { ProductManager } = require('../dao/ProductManager')
 const Router = require('express').Router
 const router = Router()
-const pm = new ProductManager('./data/products.json')
+const pm = new ProductManager('./src/data/products.json')
+
+router.get("/", async (req, res)=>{
+
+    let products = await pm.getProducts(this.path)
+
+    return res.render("productsDatabase", {products})
+
+})
 
 router.post('/realtimeproducts', async (req,res )=>{
    
@@ -34,7 +42,7 @@ router.post('/realtimeproducts', async (req,res )=>{
 
 router.get('/realtimeproducts', async (req, res) => {
 
-    let products = await pm.getProducts(this.path)    
+    let products = await pm.getProducts()    
 
     return res.render("realTimeProducts", { products })
 
@@ -42,11 +50,9 @@ router.get('/realtimeproducts', async (req, res) => {
 
 router.delete('/realtimeproducts', async(req,res)=>{
 
-    let products = await pm.getProducts(this.path)
+    let products = await pm.getProducts()
 
     let productToDelete = products.find(p=>p.id == id)
-
-    console.log(id)
 
     let quitarProducto = await pm.deleteProduct(productToDelete.id)
 

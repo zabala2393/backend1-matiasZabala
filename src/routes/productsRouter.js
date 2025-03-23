@@ -4,7 +4,7 @@ const router = Router()
 
 const ProductManager = require('../dao/ProductManager').ProductManager
 
-const pm = new ProductManager('./data/products.json')
+const pm = new ProductManager('./src/data/products.json')
 
 router.get('/', async(req,res)=>{
 
@@ -50,7 +50,7 @@ router.post("/", async (req, res) => {
     } else {
 
         res.setHeader('Content-Type', 'application/json')
-        return res.status(400).json({ payload: `Ya existe en la base de datos un producto con codigo ${code}` })
+        return res.status(400).json({ payload: `Ya existe en la base de datos un producto con codigo ${agregarProducto.code}` })
     }
 }
 )

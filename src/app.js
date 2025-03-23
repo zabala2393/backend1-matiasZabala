@@ -1,8 +1,8 @@
 const express = require("express")
 const { Server } = require('socket.io')
 const { engine } = require('express-handlebars')
-const path = require('path')
 const app = express()
+
 let io = undefined
 
 const productsRouter = require('./routes/productsRouter.js')
@@ -14,10 +14,10 @@ const PORT = 8080
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use(express.static('public'))
+app.use(express.static('./src/public'))
 app.engine('handlebars', engine())
 app.set("view engine", "handlebars")
-app.set("views", path.join(__dirname, '/views'))
+app.set("views", "./src/views")
 
 app.use("/api/products", (req, res, next)=>{
     req.io=io
@@ -39,6 +39,13 @@ const serverHttp = app.listen(PORT, () => {
 })
 
 io = new Server(serverHttp)
+
+io.on('saludo', () =>{
+
+    console.log('Bienvenido al sistema')
+
+    socket.emit('saludo')
+})
 
 io.on('connection', socket => {
 

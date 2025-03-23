@@ -18,6 +18,7 @@
           "price": 6000,
           "status": null,
           "stock": 25,
+          "category":"frutas",
           "thumbnails": []
      },
      {
@@ -205,6 +206,72 @@
           "status": "null",
           "stock": "40",
           "category": "alimentos",
+          "thumbnails": ""
+     },
+     {
+          "id": 23,
+          "title": "comino",
+          "description": "comino x 100g",
+          "code": "047",
+          "price": "2000",
+          "status": "null",
+          "stock": "540",
+          "category": "condimentos",
+          "thumbnails": ""
+     },
+     {
+          "id": 24,
+          "title": "pimienta",
+          "description": "pimienta x 100g",
+          "code": "540",
+          "price": "2300",
+          "status": "null",
+          "stock": "400",
+          "category": "condimentos",
+          "thumbnails": ""
+     },
+     {
+          "id": 25,
+          "title": "aji molido",
+          "description": "aji molido x 100g",
+          "code": "340",
+          "price": "4500",
+          "status": "null",
+          "stock": "302",
+          "category": "condimentos",
+          "thumbnails": ""
+     },
+     {
+          "id": 26,
+          "title": "pimienta negra",
+          "description": "pimienta negra x 100g",
+          "code": "654",
+          "price": "3000",
+          "status": "null",
+          "stock": "102",
+          "category": "condimentos",
+          "thumbnails": ""
+     },
+     {
+          "id": 27,
+          "title": "nuez moscada",
+          "description": "nuez moscada x 100g",
+          "code": "496",
+          "price": "2000",
+          "status": "null",
+          "stock": "841",
+          "category": "condimentos",
+          "thumbnails": ""
+     },
+     {
+          "id": 28,
+          "title": "duraznos",
+          "description": "duraznos x kg",
+          "code": "140",
+          "price": "5600",
+          "status": "null",
+          "stock": "45",
+          "category": "frutas",
           "thumbnails": ""
      }
 ]
