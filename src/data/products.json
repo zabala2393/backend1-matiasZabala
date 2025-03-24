@@ -18,7 +18,7 @@
           "price": 6000,
           "status": null,
           "stock": 25,
-          "category":"frutas",
+          "category": "frutas",
           "thumbnails": []
      },
      {
@@ -264,14 +264,47 @@
           "thumbnails": ""
      },
      {
-          "id": 28,
+          "id": 29,
+          "title": "morron verde",
+          "description": "morron verde x kg",
+          "code": "129",
+          "price": "5000",
+          "status": "null",
+          "stock": "20",
+          "category": "verduras",
+          "thumbnails": ""
+     },
+     {
+          "id": 30,
           "title": "duraznos",
           "description": "duraznos x kg",
-          "code": "140",
-          "price": "5600",
+          "code": "695",
+          "price": "4500",
           "status": "null",
-          "stock": "45",
+          "stock": "35",
           "category": "frutas",
+          "thumbnails": ""
+     },
+     {
+          "id": 31,
+          "title": "cebolla blanca",
+          "description": "cebolla blanca por kg",
+          "code": "095",
+          "price": 4000,
+          "status": null,
+          "stock": 80,
+          "category": "alimentos",
+          "thumbnails": []
+     },
+     {
+          "id": 32,
+          "title": "pimienta de cayena",
+          "description": "pimienta de cayena x 100g",
+          "code": "293",
+          "price": "2500",
+          "status": "null",
+          "stock": "4500",
+          "category": "condimentos",
           "thumbnails": ""
      }
 ]

@@ -1,5 +1,8 @@
 const socket = io()
 
+let productitem = document.getElementById('productItem')
+let botonEliminar = document.getElementsByClassName('botonEliminar')
+
 socket.on("saludo", () => {
     alert(`Bienvenido al sistema`)
 })
@@ -10,20 +13,20 @@ socket.on("agregarProducto", agregarProducto => {
     window.location.reload()
 })
 
-socket.on("quitarProducto", productToDelete => {
+socket.on("quitarProducto", productById => {
     
-    alert(`Producto ${productToDelete.title} eliminado de la base de datos exitosamente`)
+    alert(`Producto ${productById.title} eliminado de la base de datos exitosamente`)
     window.location.reload()
 })
 
-socket.on("errorCarga1", codigoDuplicado=>{
+socket.on("errorCarga1", productoDuplicado=>{
 
-    alert(`Ya existe en la base de datos un producto con codigo ${codigoDuplicado.code}`)
+    alert(`Ya existe en la base de datos un producto con nombre ${productoDuplicado.title}`)
     window.location.reload()
 })
 
-socket.on("errorCarga2", productoDuplicado=>{
+socket.on("errorCarga2", codigoDuplicado=>{
 
-    alert(`Ya existe un producto con el nombre ${productoDuplicado.title} con ID ${productoDuplicado.id}`)
+    alert(`Ya existe un producto con el codigo ${codigoDuplicado.code} con ID ${codigoDuplicado.id}`)
     window.location.reload()
 })

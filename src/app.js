@@ -1,4 +1,5 @@
 const express = require("express")
+const mongoose = require('mongoose')
 const { Server } = require('socket.io')
 const { engine } = require('express-handlebars')
 const app = express()
@@ -11,6 +12,12 @@ const viewsRouter = require('./routes/viewsRouter.js')
 const { errorhandler } = require("./middlewares/errorHandler")
 
 const PORT = 8080
+
+mongoose.connect('mongodb+srv://gemini2393:520033@e-commerce.dkxb7.mongodb.net/?retryWrites=true&w=majority&appName=e-commerce')
+.then(()=>{
+    console.log("Conectado a la base de datos de Mongo Atlas")
+})
+.catch(error=>console.error("La conexion ha fallado"))
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))

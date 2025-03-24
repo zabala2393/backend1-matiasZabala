@@ -32,25 +32,31 @@ router.post("/", async (req, res) => {
 
     const { title, description, code, price, status, stock, category, thumbnails } = req.body    
 
-    let products = await pm.getProducts(this.path)
+    let products = await pm.getProducts()
 
-    let agregarProducto = await pm.addProduct(title, description, code, price, status, stock, category, thumbnails)
-
-    req.io.emit("agregarProducto", agregarProducto)
-
-    let codigoDuplicado = products.find(p => p.code == code)
+    let agregarProducto = await pm.addProduct(title, description, code, price, status, stock, category, [thumbnails])
 
     let productoDuplicado = products.find(p=>p.title.toLowerCase() == title.toLowerCase())
+
+    let codigoDuplicado = products.find(p => p.code == code)
 
     if (!productoDuplicado || !codigoDuplicado) {
 
         res.setHeader('Content-Type', 'application/json')
         return res.status(200).json(agregarProducto)
 
-    } else {
+    } if(productoDuplicado) {        
 
+        req.io.emit("errorCarga1", productoDuplicado)
         res.setHeader('Content-Type', 'application/json')
-        return res.status(400).json({ payload: `Ya existe en la base de datos un producto con codigo ${agregarProducto.code}` })
+        return res.status(400).json({ payload: `Ya existe en la base de datos un producto con nombre ${productoDuplicado.title}` })
+    }
+     if(codigoDuplicado) {
+
+        req.io.emit("errorCarga2", codigoDuplicado)
+        res.setHeader('Content-Type', 'application/json')
+        return res.status(400).json({ payload: `Ya existe en la base de datos un producto con codigo ${codigoDuplicado.code}` })
+
     }
 }
 )

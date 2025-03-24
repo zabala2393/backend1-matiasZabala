@@ -13,10 +13,8 @@ router.get("/", async (req, res)=>{
 
 router.post('/realtimeproducts', async (req,res )=>{
    
-    const {title, description, code, price, status, stock, category, thumbnails} = req.body
+    let {title, description, code, price, status, stock, category, thumbnails} = req.body
  
-    console.log(title)   
-
     let products = await pm.getProducts(this.path)
     
     let codigoDuplicado = products.find(p=>p.code == code)
@@ -24,16 +22,20 @@ router.post('/realtimeproducts', async (req,res )=>{
     let productoDuplicado = products.find(p=>p.title == title)
     
     if (codigoDuplicado){
+
         req.io.emit("errorCarga1", codigoDuplicado)
-        return res.render ("realTimeProducts", {products})
+        res.render ("realTimeProducts", {products})
+        return codigoDuplicado
+        
     }
 
     if (productoDuplicado) {
         req.io.emit("errorCarga2", productoDuplicado)
-        return res.render ("realTimeProducts", {products})
+        res.render ("realTimeProducts", {products})
+        return productoDuplicado
     }
 
-    const agregarProducto = await pm.addProduct(title, description, code, price, status, stock, category, thumbnails)
+    const agregarProducto = await pm.addProduct(title, description, code, price, status, stock, category, [thumbnails])
 
     req.io.emit("agregarProducto", agregarProducto)
 
