@@ -1,11 +1,10 @@
-const { ProductManager } = require('../dao/ProductManager')
 const Router = require('express').Router
 const router = Router()
-const pm = new ProductManager('./src/data/products.json')
+const {ProductosMongoManager} = require('../dao/ProductosMongoManager')
 
 router.get("/", async (req, res)=>{
 
-    let products = await pm.getProducts(this.path)
+    let products = await ProductosMongoManager.get()
 
     return res.render("productsDatabase", {products})
 
@@ -15,7 +14,7 @@ router.post('/realtimeproducts', async (req,res )=>{
    
     let {title, description, code, price, status, stock, category, thumbnails} = req.body
  
-    let products = await pm.getProducts(this.path)
+    let products = await ProductosMongoManager.get()
     
     let codigoDuplicado = products.find(p=>p.code == code)
 
@@ -35,7 +34,9 @@ router.post('/realtimeproducts', async (req,res )=>{
         return productoDuplicado
     }
 
-    const agregarProducto = await pm.addProduct(title, description, code, price, status, stock, category, [thumbnails])
+    let product = {title, description, code, price, status, stock, category, thumbnails}
+
+    const agregarProducto = await ProductosMongoManager.save(product)
 
     req.io.emit("agregarProducto", agregarProducto)
 
@@ -44,7 +45,7 @@ router.post('/realtimeproducts', async (req,res )=>{
 
 router.get('/realtimeproducts', async (req, res) => {
 
-    let products = await pm.getProducts()    
+    let products = await ProductosMongoManager.get()    
 
     return res.render("realTimeProducts", { products })
 
@@ -52,11 +53,11 @@ router.get('/realtimeproducts', async (req, res) => {
 
 router.delete('/realtimeproducts', async(req,res)=>{
 
-    let products = await pm.getProducts()
+    let products = await ProductosMongoManager.get()
 
     let productToDelete = products.find(p=>p.id == id)
 
-    let quitarProducto = await pm.deleteProduct(productToDelete.id)
+    let quitarProducto = await ProductosMongoManager.findByIdAndDelete(id, {})
 
     req.io.emit("quitarProducto", productToDelete)
 
