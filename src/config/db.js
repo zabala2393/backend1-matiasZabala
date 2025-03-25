@@ -9,4 +9,3 @@ export const conectarDB = async (uriMongoDB, dbName)=>{
         console.log(`Error al conectar a base de datos ${error.message}`)
     }
 }
-

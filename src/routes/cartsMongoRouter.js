@@ -1,16 +1,12 @@
 const Router = require('express').Router
 const router = Router()
 
-const ProductManager = require('../dao/ProductManager').ProductManager
-const CartManager = require('../dao/CartManager').CartManager
-
-const cm = new CartManager('./src/data/carts.json')
-const pm = new ProductManager('./src/data/products.json')
-
+const {CarritosMongoManager} = require('../dao/CarritosMongoManager')
+const { ProductosMongoManager } = require('../dao/ProductosMongoManager')
 
 router.get("/", async (req, res)=>{
 
-    let ordenes = await cm.getOrdenes()
+    let ordenes = await CarritosMongoManager.get()
 
     res.setHeader('Content-Type', 'application/json')
     res.status(200).json(ordenes)
@@ -20,9 +16,7 @@ router.get("/", async (req, res)=>{
 
 router.post("/", async (req, res) => {
 
-    let ordenes = await cm.getOrdenes()
-
-    let carrito = await cm.createCart()
+    let carrito = await CarritosMongoManager.save()
 
     res.setHeader('Content-Type', 'application/json')
     res.status(200).send(`Carrito creado con exito !`)
@@ -35,14 +29,14 @@ router.get("/:cid", async (req, res) => {
 
     let { cid } = req.params
 
-    let ordenes = await cm.getOrdenes()
+    let ordenes = await CarritosMongoManager.get()
 
-    let carritoEncontrado = ordenes.find(c => c.cid == cid)
+    let carritoEncontrado = ordenes.find(cid)
 
     if (carritoEncontrado) {
 
         res.setHeader('Content-Type', 'application/json')
-        res.status(200).json(carritoEncontrado.products)
+        res.status(200).json(carritoEncontrado)
 
     } else {
 
@@ -55,15 +49,17 @@ router.post("/:cid/product/:pid", async (req, res) => {
 
     let { cid, pid } = req.params
 
-    let ordenes = await cm.getOrdenes(this.path)
+    let {quantity} = req.body
 
-    let products = await pm.getProducts(this.path)
+    let ordenes = await CarritosMongoManager.get()
+
+    let products = await ProductosMongoManager.get()
 
     let productoObjetivo = products.find(p => p.id == pid)
 
     let carritoObjetivo = ordenes.find(cart => cart.cid == cid)
 
-    let agregarProducto = await cm.addToCart(carritoObjetivo, productoObjetivo)
+    let agregarProducto = await ProductosMongoManager.save()
 
     if (!productoObjetivo || !carritoObjetivo) {
 
@@ -77,6 +73,10 @@ router.post("/:cid/product/:pid", async (req, res) => {
         res.status(200).send(`${productoObjetivo.title} agregado al carrito ${carritoObjetivo.cid} correctamente`)
         return agregarProducto
     }
+})
+
+router.put('/:cid', (req,res)=>{
+    
 })
 
 module.exports=router

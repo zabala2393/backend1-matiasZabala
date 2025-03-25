@@ -8,8 +8,7 @@ let io = undefined
 
 const database = require('./config/db.js')
 const productsMongoRouter = require('./routes/productosMongoRouter.js')
-const productsRouter = require('./routes/productsRouter.js')
-const cartsRouter = require('./routes/cartsRouter.js')
+const cartsMongoRouter = require('./routes/cartsMongoRouter.js')
 const viewsRouter = require('./routes/viewsRouter.js')
 const { errorhandler } = require("./middlewares/errorHandler")
 
@@ -18,7 +17,7 @@ const db = database.conectarDB(config.MONGO_URL, config.DB_NAME)
 const PORT = config.PORT
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use(express.static('./src/public'))
+app.use(express.static('./src/public', productsMongoRouter))
 app.engine('handlebars', engine())
 app.set("view engine", "handlebars")
 app.set("views", "./src/views")
@@ -28,7 +27,10 @@ app.use("/api/products", (req,res,next)=>{
     next()
 },
 productsMongoRouter)
-app.use("/api/carts", cartsRouter)
+app.use("/api/carts", (req,res,next)=>{
+    req.io=io,
+    next()
+}, cartsMongoRouter)
 app.use("/", (req, res, next) => {
     req.io = io
     next()

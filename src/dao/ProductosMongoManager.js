@@ -9,6 +9,10 @@ export class ProductosMongoManager{
         return await productosModelo.findOne(filtro).lean()
     }
 
+    static async getById(id){
+        return await productosModelo.getById(id).lean
+    }
+
     static async save(product){
         let nuevoProducto = await productosModelo.create(product)
         return nuevoProducto.toJSON()
