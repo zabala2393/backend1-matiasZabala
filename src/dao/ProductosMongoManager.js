@@ -25,4 +25,6 @@ export class ProductosMongoManager{
     static async delete(id){
         return await productosModelo.findByIdAndDelete(id, {}).lean()
     }
+
+
 }

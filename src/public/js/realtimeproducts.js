@@ -1,8 +1,5 @@
 const socket = io()
 
-let productitem = document.getElementById('productItem')
-let botonEliminar = document.getElementsByClassName('botonEliminar')
-
 socket.on("saludo", () => {
     alert(`Bienvenido al sistema`)
 })

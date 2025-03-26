@@ -1,5 +1,6 @@
 const Router = require('express').Router
 const router = Router()
+const { isValidObjectId } = require("mongoose")
 
 const {CarritosMongoManager} = require('../dao/CarritosMongoManager')
 const { ProductosMongoManager } = require('../dao/ProductosMongoManager')
@@ -19,7 +20,7 @@ router.post("/", async (req, res) => {
     let carrito = await CarritosMongoManager.save()
 
     res.setHeader('Content-Type', 'application/json')
-    res.status(200).send(`Carrito creado con exito !`)
+    res.status(200).json(carrito)
 
     return carrito
 
@@ -29,33 +30,38 @@ router.get("/:cid", async (req, res) => {
 
     let { cid } = req.params
 
-    let ordenes = await CarritosMongoManager.get()
+        if(!isValidObjectId(cid)){
+            res.setHeader('Content-Type', 'application/json')
+            return res.status(400).json({error:`Ingrese un id valido de MongoDB`})
+        }
 
-    let carritoEncontrado = ordenes.find(cid)
+    let carritoEncontrado = await CarritosMongoManager.getBy({_id:cid})
 
-    if (carritoEncontrado) {
+    if (!carritoEncontrado) {
 
         res.setHeader('Content-Type', 'application/json')
-        res.status(200).json(carritoEncontrado)
+        res.status(404).send(`El carrito con el CID ${cid} no existe`)
 
     } else {
 
         res.setHeader('Content-Type', 'application/json')
-        res.status(404).send(`El carrito con el CID ${cid} no existe`)
+        res.status(200).json(carritoEncontrado)
+
+
     }
 })
 
 router.post("/:cid/product/:pid", async (req, res) => {
 
-    let { cid, pid } = req.params
+    let { cid } = req.params
 
-    let {quantity} = req.body
+    let {product, quantity} = req.body
 
     let ordenes = await CarritosMongoManager.get()
 
     let products = await ProductosMongoManager.get()
 
-    let productoObjetivo = products.find(p => p.id == pid)
+    let productoObjetivo = products.find(p => p.id == product.id)
 
     let carritoObjetivo = ordenes.find(cart => cart.cid == cid)
 

@@ -28,13 +28,9 @@ router.get('/:id', async(req,res)=>{
         return res.status(400).json({error:`Ingrese un id valido de MongoDB`})
     }
 
-    let products = await ProductosMongoManager.get()
+    let productById = await ProductosMongoManager.getBy({_id:id})
 
-    let existe = products.find(p=>p._id==id)
-
-    try {
-       
-        let productById =  existe
+    try {     
 
         if(!productById) {
 
@@ -132,13 +128,20 @@ router.delete('/:id', async(req,res)=>{
 
     let {id} = req.params
 
-    let productDelete = await ProductosMongoManager.delete(id,{})
+    try {
 
-    res.setHeader('Content-Type', 'application/json')
-    return res.status(200).json({productDelete}) 
+        let productDelete = await ProductosMongoManager.delete(id,{})
+
+        res.setHeader('Content-Type', 'application/json')
+        return res.status(200).json({productDelete}) 
+    
+        
+    } catch (error) {
+        console.log(error.message)
+    }
+
 
 })
-
 
 
 module.exports = router
