@@ -4,14 +4,21 @@ const { isValidObjectId } = require("mongoose")
 
 const {CarritosMongoManager} = require('../dao/CarritosMongoManager')
 const { ProductosMongoManager } = require('../dao/ProductosMongoManager')
+const { carritoModelo } = require('../dao/models/carritoModelo')
 
 router.get("/", async (req, res)=>{
 
-    let ordenes = await CarritosMongoManager.get()
+try {
+    let carritos = await CarritosMongoManager.get()
 
     res.setHeader('Content-Type', 'application/json')
-    res.status(200).json(ordenes)
-    return ordenes
+    return res.status(200).json({carritos})
+       
+} catch (error) {
+
+    console.log(error.message)
+}
+
 
 })
 
@@ -51,38 +58,68 @@ router.get("/:cid", async (req, res) => {
     }
 })
 
-router.post("/:cid/product/:pid", async (req, res) => {
+router.put("/:cid/product/:pid", async (req, res) => {
 
-    let { cid } = req.params
+    let {cid, pid} = req.params
 
-    let {product, quantity} = req.body
+    let {quantity} = req.body    
 
-    let ordenes = await CarritosMongoManager.get()
+    let carritoObjetivo = await CarritosMongoManager.getBy({_id:cid})
 
-    let products = await ProductosMongoManager.get()
-
-    let productoObjetivo = products.find(p => p.id == product.id)
-
-    let carritoObjetivo = ordenes.find(cart => cart.cid == cid)
-
-    let agregarProducto = await ProductosMongoManager.save()
+    let productoObjetivo = await ProductosMongoManager.getBy({_id:pid})   
 
     if (!productoObjetivo || !carritoObjetivo) {
-
         res.setHeader('Content-Type', 'application/json')
-        res.status(404).send('El carrito/producto no es correcto. Por favor, revise los datos')
-        return
+        res.status(404).send('El carrito/producto no existe. Por favor, revise los datos')
+        return}
 
-    } else {
+        let products = carritoObjetivo.products
 
+        let aModificar = {...products, productoObjetivo, quantity} 
+
+try {
+        let carritoActualizado = await CarritosMongoManager.update(carritoObjetivo, {products:aModificar})
+       
+        
         res.setHeader('Content-Type', 'application/json')
-        res.status(200).send(`${productoObjetivo.title} agregado al carrito ${carritoObjetivo.cid} correctamente`)
-        return agregarProducto
-    }
+        return res.status(200).json(carritoActualizado)
+        
+        
+} catch (error) {
+    console.log(error.message)
+}
+
+   
 })
 
 router.put('/:cid', (req,res)=>{
     
+})
+
+router.delete('/:cid', async (req,res)=>{
+
+    try {
+        
+    let {cid} = req.params
+
+    if(!isValidObjectId(cid)){
+        res.setHeader('Content-Type', 'application/json')
+        return res.status(400).json({error:`Ingrese un ID valido de MongoDB`})
+    }
+
+    let vaciarCarrito = await CarritosMongoManager.update(cid, {products:[]}, {new:true})
+
+    res.setHeader('Content-Type', 'application/json')
+    return res.status(200).send({payload:`Carrito vaciado con exito`})
+        
+    } catch (error) {
+
+        console.log(error.message)
+        
+    }
+
+
+
 })
 
 module.exports=router

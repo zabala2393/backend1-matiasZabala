@@ -1,5 +1,6 @@
 const Router = require('express').Router
 const router = Router()
+const { CarritosMongoManager } = require('../dao/CarritosMongoManager')
 const {ProductosMongoManager} = require('../dao/ProductosMongoManager')
 
 router.get("/", async (req, res)=>{
@@ -64,5 +65,7 @@ router.delete('/realtimeproducts', async(req,res)=>{
     return res.render("realTimeProducts", {products})
 
 })
+
+
 
 module.exports = router
