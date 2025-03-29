@@ -6,7 +6,8 @@ const cartsSchema = new mongoose.Schema(
             type:Object,
             default: [],
 
-            quantity:Number
+            quantity:Number,
+
         }
     ],
 
