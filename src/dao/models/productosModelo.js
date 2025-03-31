@@ -6,7 +6,8 @@ const productsSchema = new mongoose.Schema(
         title: {
             type: String,
             required: true,
-            unique: true
+            unique: true,
+            index:true
         },
         description: String,
         code: {
@@ -14,10 +15,13 @@ const productsSchema = new mongoose.Schema(
             required: true,
             unique: true,
         },
-        price: Number,
+        price: {
+            type:Number,
+            index: true,
+        },
         status: {
             type: Boolean,
-            default: false,           
+            default: false,       
 
         },
         stock: {
@@ -35,11 +39,10 @@ const productsSchema = new mongoose.Schema(
     }
 )
 
-const productosModelo = mongoose.model(
-    "products",
-    productsSchema
-)
 
-productsSchema.plugin(paginate)
+const paginar = productsSchema.plugin(paginate)
 
-module.exports = { productosModelo }
+const productosModelo = mongoose.model('products', productsSchema)
+
+module.exports = {productosModelo}
+

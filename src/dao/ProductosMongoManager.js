@@ -18,7 +18,7 @@ export class ProductosMongoManager{
         return nuevoProducto.toJSON()
     }
 
-    static async update(id, aModificar){
+    static async update(id, aModificar={}){
         return await productosModelo.findByIdAndUpdate(id, aModificar, {new:true}).lean()
     }
 

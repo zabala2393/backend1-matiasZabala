@@ -1,13 +1,22 @@
 const Router = require('express').Router
 const router = Router()
-const { CarritosMongoManager } = require('../dao/CarritosMongoManager')
+
 const {ProductosMongoManager} = require('../dao/ProductosMongoManager')
 
 router.get("/", async (req, res)=>{
 
-    let products = await ProductosMongoManager.get()
+    let {page, limit}=req.query
+    if(!page){
+        page=1
+    }
+    if(!limit){
+        limit=4
+    }
 
-    return res.render("productsDatabase", {products})
+    let products = await ProductosMongoManager.get()
+    let {totalPages, hasNextPage, nextPage, hasPrevPage, prevPage} = await ProductosMongoManager.get( page, limit)
+
+    res.render("productsDatabase", {products, totalPages, hasNextPage, nextPage, hasNextPage, hasPrevPage, prevPage})
 
 })
 

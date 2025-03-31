@@ -40,5 +40,17 @@
 
 </ul>
 
+<a href="/realtimeproducts?page=1">Pág. 1</a>
+
+{{#if hasPrevPage}}
+    <a href="/realtimeproducts?page={{prevPage}}">Pág. Ant.</a>
+{{/if}}
+
+{{#if hasNextPage}}
+    <a href="/realtimeproducts?page={{nextPage}}">Pág. Sig.</a>
+{{/if}}
+
+<a href="/realtimeproducts?page={{totalPages}}">Últ. pág.</a>
+
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/realtimeproducts.js"></script>

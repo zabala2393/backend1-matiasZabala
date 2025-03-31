@@ -15,8 +15,12 @@ export class CarritosMongoManager{
         return nuevoCarrito.toJSON()
     }
 
-    static async update(id, aModificar={}){
-        return await carritoModelo.findByIdAndUpdate(id, aModificar, {new:true, runValidators:true}).lean()
+    static async find(id, filtro={}){
+        return await carritoModelo.find(id, filtro)
+    }
+
+    static async update(id, aModificar={}){ 
+        return await carritoModelo.findByIdAndUpdate(id, aModificar, {new:true}).lean()
     }
 
     static async delete(id){

@@ -24,6 +24,7 @@ app.set("views", "./src/views")
 
 app.use("/api/products", (req,res,next)=>{
     req.io=io,
+    req.db=db
     next()
 },
 productsMongoRouter)
