@@ -12,9 +12,8 @@ router.get("/", async (req, res)=>{
     if(!limit){
         limit=4
     }
-
-    let products = await ProductosMongoManager.get()
-    let {totalPages, hasNextPage, nextPage, hasPrevPage, prevPage} = await ProductosMongoManager.get( page, limit)
+    
+    let {docs:products, totalPages, hasNextPage, nextPage, hasPrevPage, prevPage} = await ProductosMongoManager.get( page, limit)
 
     res.render("productsDatabase", {products, totalPages, hasNextPage, nextPage, hasNextPage, hasPrevPage, prevPage})
 
@@ -55,9 +54,17 @@ router.post('/realtimeproducts', async (req,res )=>{
 
 router.get('/realtimeproducts', async (req, res) => {
 
-    let products = await ProductosMongoManager.get()    
+    let {page, limit}=req.query
+    if(!page){
+        page=1
+    }
+    if(!limit){
+        limit=4
+    }
 
-    return res.render("realTimeProducts", { products })
+    let {docs:products,totalPages, hasNextPage, nextPage, hasPrevPage, prevPage} = await ProductosMongoManager.get(page, limit)  
+
+    res.render("realtimeProducts", {products, totalPages, hasNextPage, nextPage, hasNextPage, hasPrevPage, prevPage})
 
 })
 

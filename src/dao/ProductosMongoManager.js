@@ -1,8 +1,8 @@
 import { productosModelo } from "./models/productosModelo.js";
 
 export class ProductosMongoManager{
-    static async get(){
-        return await productosModelo.find().lean()
+    static async get(page=1, limit=4){
+        return await productosModelo.paginate({}, {page, limit, lean:true})
     }
 
     static async getBy(filtro={}){

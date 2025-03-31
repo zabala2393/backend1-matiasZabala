@@ -8,8 +8,7 @@ router.get('/', async (req,res)=>{
    
     try {
 
-        let products = await ProductosMongoManager.get()
-
+        let products= await ProductosMongoManager.get()
         res.setHeader("Content-Type", 'application/json')
         res.status(200).json({products})
         

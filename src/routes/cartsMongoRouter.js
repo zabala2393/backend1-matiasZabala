@@ -81,7 +81,13 @@ router.post("/:cid/product/:pid", async (req, res) => {
     }
     try {
 
-        let carritoActualizado = await CarritosMongoManager.update(cid, {products:productoObjetivo._id})
+        console.log(carritoObjetivo)
+
+        console.log(productoObjetivo._id)
+
+        let cart= await CarritosMongoManager.getBy(carritoObjetivo._id)
+
+        let carritoActualizado = await CarritosMongoManager.update(cid, {products: [...cart.products, product=productoObjetivo._id, quantity=cantidadIngresada ]})
 
         console.log(carritoActualizado)
 
