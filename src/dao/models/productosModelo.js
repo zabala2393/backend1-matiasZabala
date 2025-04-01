@@ -3,6 +3,7 @@ const paginate = require('mongoose-paginate-v2')
 
 const productsSchema = new mongoose.Schema(
     {
+        
         title: {
             type: String,
             required: true,

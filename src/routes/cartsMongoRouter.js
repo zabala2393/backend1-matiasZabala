@@ -70,9 +70,9 @@ router.post("/:cid/product/:pid", async (req, res) => {
         return cantidadIngresada
     }
 
-    let carritoObjetivo = await CarritosMongoManager.getBy({ _id: cid })
-
     let productoObjetivo = await ProductosMongoManager.getBy({ _id: pid })
+
+    let carritoObjetivo = await CarritosMongoManager.getBy({ _id: cid })
 
     if (!productoObjetivo || !carritoObjetivo) {
         res.setHeader('Content-Type', 'application/json')
@@ -81,18 +81,33 @@ router.post("/:cid/product/:pid", async (req, res) => {
     }
     try {
 
-        console.log(carritoObjetivo)
+        let cart = await CarritosMongoManager.getBy(carritoObjetivo._id)
 
-        console.log(productoObjetivo._id)
+        let isinCart = cart.products.find(product => product._id == productoObjetivo._id)
 
-        let cart= await CarritosMongoManager.getBy(carritoObjetivo._id)
+        if (isinCart) {
 
-        let carritoActualizado = await CarritosMongoManager.update(cid, {products: [...cart.products, product=productoObjetivo._id, quantity=cantidadIngresada ]})
+            console.log(isinCart)
 
-        console.log(carritoActualizado)
+            let cantidadAnterior = isinCart.quantity
+
+            let cantidadActualizada = (cantidadAnterior + cantidadIngresada)           
+
+            console.log(cantidadActualizada)
+
+            let carritoActualizado = await CarritosMongoManager.update(cid, )
+
+            res.setHeader('Content-Type', 'application/json')
+
+            return res.status(200).json(carritoActualizado)
+        } else {
+
+        let agregarproducto = cart.products.push({ productoObjetivo, quantity })
+
+        let actualizarCarrito = await CarritosMongoManager.update(cid, cart)
 
         res.setHeader('Content-Type', 'application/json')
-        return res.status(201).json(carritoObjetivo)
+        return res.status(201).json(actualizarCarrito)}
 
     } catch (error) {
         console.log(error.message)
@@ -129,7 +144,7 @@ router.put('/:cid/product/:pid', async (req, res) => {
 
     let aModificar = cantidadActualizada
 
-    let carritoActualizado = await CarritosMongoManager.update(cid, {quantity: aModificar })
+    let carritoActualizado = await CarritosMongoManager.update(cid, { quantity: aModificar })
     res.setHeader('Content-Type', 'application/json')
     return res.status(200).json(carritoActualizado)
 
