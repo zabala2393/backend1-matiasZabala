@@ -3,6 +3,7 @@ const router = Router()
 
 const {ProductosMongoManager} = require('../dao/ProductosMongoManager')
 
+
 router.get("/", async (req, res)=>{
 
     let {page, limit}=req.query
@@ -13,7 +14,7 @@ router.get("/", async (req, res)=>{
         limit=4
     }
     
-    let {docs:products, totalPages, hasNextPage, nextPage, hasPrevPage, prevPage} = await ProductosMongoManager.get( page, limit)
+    let {docs:products,status, payload,prevLink, nextLink, totalPages, hasNextPage, nextPage, hasPrevPage, prevPage} = await ProductosMongoManager.get(page, limit)
 
     res.render("productsDatabase", {products, totalPages, hasNextPage, nextPage, hasNextPage, hasPrevPage, prevPage})
 
@@ -81,7 +82,5 @@ router.delete('/realtimeproducts', async(req,res)=>{
     return res.render("realTimeProducts", {products})
 
 })
-
-
 
 module.exports = router

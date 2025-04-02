@@ -7,16 +7,12 @@ export class CarritosMongoManager{
     }
 
     static async getBy(filtro={}){
-        return await carritoModelo.findOne(filtro).lean()
+        return await carritoModelo.findOne(filtro).lean().populate("products.product", 'title description code price status stock thumbnails' ).sort(["asc", "desc"]['price'])
     }
 
     static async save(cart){
         let nuevoCarrito= await carritoModelo.create(cart)
         return nuevoCarrito.toJSON()
-    }
-
-    static async populate(id){
-        return await carritoModelo.find(id).populate()
     }
 
     static async update(id, aModificar={}){ 
