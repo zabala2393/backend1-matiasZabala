@@ -71,7 +71,7 @@ router.post('/', async (req,res)=>{
     
         if(existe){
 
-            req.io.emit("errorCarga2", codigoDuplicado)
+            req.io.emit("errorCarga2", existe)
             res.setHeader('Content-Type', 'application/json')
             return res.status(400).json({error:`Ya existe un producto con el codigo ${code} en la base de datos`})
         }
@@ -92,10 +92,8 @@ router.put('/:id', async (req,res)=>{
     let aModificar = req.body
     let {id} = req.params
 
-    let products = await ProductosMongoManager.get()
-
-    let productoDuplicado = products.find(p=>p.title==aModificar.title)
-    let existe = products.find(p=>p.code==aModificar.code)
+    let productoDuplicado = await ProductosMongoManager.getBy({title:aModificar.title})
+    let existe = await ProductosMongoManager.getBy({title:aModificar.code})
 
     if(productoDuplicado) {        
 

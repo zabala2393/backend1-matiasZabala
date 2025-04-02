@@ -7,7 +7,7 @@ export class CarritosMongoManager{
     }
 
     static async getBy(filtro={}){
-        return await carritoModelo.findOne(filtro)
+        return await carritoModelo.findOne(filtro).lean()
     }
 
     static async save(cart){
@@ -15,15 +15,19 @@ export class CarritosMongoManager{
         return nuevoCarrito.toJSON()
     }
 
-    static async find(id, filtro={}){
-        return await carritoModelo.find(id, filtro)
+    static async populate(id){
+        return await carritoModelo.find(id).populate()
     }
 
     static async update(id, aModificar={}){ 
-        return await carritoModelo.findByIdAndUpdate(id, aModificar, {new:true}).lean()
+        return await carritoModelo.findByIdAndUpdate(id, aModificar, {new:true, runValidators:true}).lean()
     }
 
     static async delete(id){
         return await carritoModelo.findByIdAndDelete(id, {}). lean()
+    }
+
+    static async exists(id){
+        return await carritoModelo.exists(id)
     }
 }
