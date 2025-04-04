@@ -88,9 +88,15 @@ router.get("/carts/:cid", async(req,res)=>{
 
     let {cid} = req.params 
 
-    let {docs:carrito,status, payload,prevLink, nextLink, totalPages, hasNextPage, nextPage, hasPrevPage, prevPage} = await CarritosMongoManager.getBy({_id:cid})
+    let cart = await CarritosMongoManager.getBy({_id:cid})
+
+    let {docs:carrito} = await CarritosMongoManager.getBy({_id:cid})
+
+    let inCart = cart.products 
     
-    res.render("cartId", {carrito, cid})
+    req.io.emit("borrarProducto")
+    
+    res.render("cartId", { carrito , cid, inCart })
 
 })
 

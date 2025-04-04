@@ -27,3 +27,9 @@ socket.on("errorCarga2", codigoDuplicado=>{
     alert(`Ya existe un producto con el codigo ${codigoDuplicado.code} con ID ${codigoDuplicado._id}`)
 
 })
+
+socket.on("borrarProducto",actualizarCarrito=>{
+    window.location.reload()
+    alert(`Se ha eliminado el producto del carrito!`)
+
+} )

@@ -1,10 +1,12 @@
 <h2>Carrito {{cid}}</h2>
 
-<ul>
-
     <h2>Listado de productos</h2>
 
-    {{#each products}}
+{{#if inCart}}
+
+<ul>
+
+    {{#each inCart}}
 
     <li>
 
@@ -19,6 +21,18 @@
     {{/each}}
     
 </ul>
+
+{{/if}}
+
+{{#else}}
+
+<h2>No hay productos en este carrito</h2>
+
+{{/else}}
+
+
+
+<a href="/realtimeproducts">Ver productos</a>
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/realtimeproducts.js"></script>

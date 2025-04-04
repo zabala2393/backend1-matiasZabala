@@ -237,14 +237,52 @@ router.delete("/:cid/product/:pid", async (req, res) => {
 
     if (!product || !cart) {
         res.setHeader('Content-Type', 'application/json')
-        return res.status(401).json({ error: `Carrito o producto no existente` })
+        return res.status(401).json({ error: `Carrito no valido o producto no existente en carrito` })
     }
 
-    let estaEnCarrito = await CarritosMongoManager.getBy({})
+    let cartFlat = cart.products.flat(Infinity)
 
-    console.log(estaEnCarrito)
+    let productosIndividuales = JSON.stringify(cartFlat, null)
 
-    let borrarProducto = cart.products.splice(indiceProducto, 1)
+    let existe = productosIndividuales.match(product._id)
+
+    if (existe) {
+
+        const indiceProducto = cartFlat.findIndex(item => {
+            if (
+                item &&
+                typeof item === 'object' &&
+                item.hasOwnProperty('product') &&
+                item.product &&
+                typeof item.product === 'object' &&
+                item.product.hasOwnProperty('_id')
+
+            ) {
+
+                return String(item.product._id) === pid
+            }
+        }
+        )
+
+        console.log(indiceProducto)
+
+        let borrarProducto = cart.products.splice(indiceProducto, 1)
+
+        let actualizarCarrito = await CarritosMongoManager.update(cid, cart)
+
+        console.log(actualizarCarrito)
+
+        req.io.emit("borrarProducto", actualizarCarrito)
+        res.setHeader('Content-Type', 'application/json')
+        res.status(401).json({ payload: `Producto ${product.title} eliminado del carrito con exito` })
+        return res.render("cartId")
+
+    } else {
+        
+        res.setHeader('Content-Type', 'application/json')
+        return res.status(401).json({ error: `Carrito no valido o producto no existente en carrito` })
+    }
+
 
 })
 
