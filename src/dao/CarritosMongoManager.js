@@ -10,6 +10,10 @@ export class CarritosMongoManager{
         return await carritoModelo.findOne(filtro).lean().populate("products.product", 'title description code price status stock thumbnails' ).sort(["asc", "desc"]['price'])
     }
 
+    static async filter(filtro={}){
+        return await carritoModelo.exists(filtro).lean()
+    }
+
     static async save(cart){
         let nuevoCarrito= await carritoModelo.create(cart)
         return nuevoCarrito.toJSON()

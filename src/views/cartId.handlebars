@@ -1,0 +1,24 @@
+<h2>Carrito {{cid}}</h2>
+
+<ul>
+
+    <h2>Listado de productos</h2>
+
+    {{#each products}}
+
+    <li>
+
+        Nombre: {{title}} <br>
+        Precio: ${{price}} <br>
+        Categoria: {{category}} <br>
+        ID: {{_id}} <br>
+        Codigo: {{code}} <br>
+
+    </li>
+
+    {{/each}}
+    
+</ul>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/realtimeproducts.js"></script>

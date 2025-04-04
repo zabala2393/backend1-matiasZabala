@@ -1,6 +1,7 @@
 const Router = require('express').Router
 const router = Router()
 
+const { CarritosMongoManager } = require('../dao/CarritosMongoManager')
 const {ProductosMongoManager} = require('../dao/ProductosMongoManager')
 
 
@@ -80,6 +81,16 @@ router.delete('/realtimeproducts', async(req,res)=>{
     req.io.emit("quitarProducto", productToDelete)
 
     return res.render("realTimeProducts", {products})
+
+})
+
+router.get("/carts/:cid", async(req,res)=>{
+
+    let {cid} = req.params 
+
+    let {docs:carrito,status, payload,prevLink, nextLink, totalPages, hasNextPage, nextPage, hasPrevPage, prevPage} = await CarritosMongoManager.getBy({_id:cid})
+    
+    res.render("cartId", {carrito, cid})
 
 })
 
