@@ -24,6 +24,7 @@
 
     {{#each products}}
 
+    <form>
     <li id="productItem">
 
         Nombre: {{title}} <br>
@@ -32,7 +33,10 @@
         ID: {{_id}} <br>
         Codigo: {{code}} <br>
 
+        <button type="submit" class="botonAgregar"> Agregar al carrito </button>
         <button type="button" class="botonEliminar">Eliminar producto</button>
+
+    </form>
 
     </li>
 
