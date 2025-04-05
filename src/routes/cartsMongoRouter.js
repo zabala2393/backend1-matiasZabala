@@ -272,7 +272,7 @@ router.delete("/:cid/product/:pid", async (req, res) => {
 
         console.log(actualizarCarrito)
 
-        req.io.emit("borrarProducto", actualizarCarrito)
+
         res.setHeader('Content-Type', 'application/json')
         res.status(401).json({ payload: `Producto ${product.title} eliminado del carrito con exito` })
         return res.render("cartId")
@@ -284,6 +284,26 @@ router.delete("/:cid/product/:pid", async (req, res) => {
     }
 
 
+})
+
+router.put("/:cid", async (req,res) => {
+    
+    let product, quantity = req.body
+
+    let {cid} = req.params
+
+    let stringProductos = JSON.stringify(req.body)
+
+    let arrayProductos = JSON.parse(stringProductos)
+
+    let cart = await CarritosMongoManager.getBy({_id:cid})
+
+    let vaciarcarrito = await CarritosMongoManager.update(cid,  { products : []}, {new:true})
+
+    let carritoNuevo = await CarritosMongoManager.update(cid, {products : arrayProductos})
+    
+    res.setHeader('Content-Type', 'application/json')
+    return res.status(200).json(carritoNuevo)
 })
 
 router.delete('/:cid', async (req, res) => {
