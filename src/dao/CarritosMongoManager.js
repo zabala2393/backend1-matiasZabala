@@ -3,11 +3,11 @@ import { carritoModelo } from "./models/carritoModelo.js";
 export class CarritosMongoManager{
 
     static async get(){
-        return await carritoModelo.find().lean()
+        return await carritoModelo.find().lean().populate("products.product", 'title description code price status stock category thumbnails' ).sort(["asc", "desc"]['price'])
     }
 
     static async getBy(filtro={}){
-        return await carritoModelo.findOne(filtro).lean().populate("products.product", 'title description code price status stock thumbnails' ).sort(["asc", "desc"]['price'])
+        return await carritoModelo.findOne(filtro).lean().populate("products.product", 'title description code price status stock category thumbnails' ).sort(["asc", "desc"]['price'])
     }
 
     static async filter(filtro={}){

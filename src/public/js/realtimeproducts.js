@@ -16,12 +16,6 @@ socket.on("quitarProducto", productById => {
     window.location.reload()
 })
 
-socket.on("errorCarga1", productoDuplicado=>{
-
-    alert(`Ya existe en la base de datos un producto con nombre ${productoDuplicado.title}`)
-
-})
-
 socket.on("errorCarga2", codigoDuplicado=>{
 
     alert(`Ya existe un producto con el codigo ${codigoDuplicado.code} con ID ${codigoDuplicado._id}`)
@@ -33,3 +27,11 @@ socket.on("borrarProducto",actualizarCarrito=>{
     alert(`Se ha eliminado el producto del carrito!`)
 
 } )
+
+socket.on("rutaErronea", cid=>{
+    alert(`No existe ningun carrito con el id ${cid}`)
+})
+
+socket.on("idErroneo", ()=>{
+    alert(`El id ingresado no es valido`)
+})

@@ -60,16 +60,7 @@ router.post("/:cid/product/:pid", async (req, res) => {
 
     let { cid, pid } = req.params
 
-    let { quantity } = req.body
-
-    let validar = isNaN(quantity)
-
-    if (!quantity || validar) {
-
-        res.setHeader('Content-Type', 'application/json')
-        res.status(401).send('Por favor, ingrese la cantidad correcta que desea agregar del producto')
-        return
-    }
+    let quantity = 1
 
     let cantidadIngresada = parseFloat(quantity)
 
@@ -113,9 +104,9 @@ router.post("/:cid/product/:pid", async (req, res) => {
 
             let cantidadActualizada = cantidadAnterior + cantidadIngresada
 
-            let borrarProducto = cart.products.splice(indiceProducto,1 )
+            let borrarProducto = cart.products.splice(indiceProducto, 1)
 
-            let productonuevo = cart.products.push({product:productoObjetivo, quantity:cantidadActualizada})
+            let productonuevo = cart.products.push({ product: productoObjetivo, quantity: cantidadActualizada })
 
             let actualizarCarrito = await CarritosMongoManager.update(cid, cart)
 
@@ -134,7 +125,7 @@ router.post("/:cid/product/:pid", async (req, res) => {
         }
 
     } catch (error) {
-        return console.log(error.message)
+        console.log(error.message)
 
     }
 })
@@ -196,9 +187,9 @@ router.put('/:cid/product/:pid', async (req, res) => {
 
             let cantidadActualizada = cantidadAnterior + cantidadIngresada
 
-            let borrarProducto = cart.products.splice(indiceProducto,1 )
+            let borrarProducto = cart.products.splice(indiceProducto, 1)
 
-            let productonuevo = cart.products.push({product:productoObjetivo, quantity:cantidadActualizada})
+            let productonuevo = cart.products.push({ product: productoObjetivo, quantity: cantidadActualizada })
 
             let actualizarCarrito = await CarritosMongoManager.update(cid, cart)
 
@@ -211,7 +202,7 @@ router.put('/:cid/product/:pid', async (req, res) => {
             let agregarproducto = cart.products.push({ product: productoObjetivo, quantity: cantidadIngresada })
 
             let actualizarCarrito = await CarritosMongoManager.update(cid, cart)
-            
+
             res.setHeader('Content-Type', 'application/json')
             return res.status(201).json(actualizarCarrito)
         }
@@ -278,7 +269,7 @@ router.delete("/:cid/product/:pid", async (req, res) => {
         return res.render("cartId")
 
     } else {
-        
+
         res.setHeader('Content-Type', 'application/json')
         return res.status(401).json({ error: `Carrito no valido o producto no existente en carrito` })
     }
@@ -286,24 +277,67 @@ router.delete("/:cid/product/:pid", async (req, res) => {
 
 })
 
-router.put("/:cid", async (req,res) => {
-    
+router.put("/:cid", async (req, res) => {
+
     let product, quantity = req.body
 
-    let {cid} = req.params
+    let { cid } = req.params
 
-    let stringProductos = JSON.stringify(req.body)
+    if (!isValidObjectId(cid)) {
 
-    let arrayProductos = JSON.parse(stringProductos)
+        res.setHeader('Content-Type', 'application/json')
+        return res.status(401).json({ message: "El ID de carrito no es valido" })
+    }
 
-    let cart = await CarritosMongoManager.getBy({_id:cid})
+    try {
 
-    let vaciarcarrito = await CarritosMongoManager.update(cid,  { products : []}, {new:true})
+        let arrayProductos = Array(req.body)
 
-    let carritoNuevo = await CarritosMongoManager.update(cid, {products : arrayProductos})
-    
-    res.setHeader('Content-Type', 'application/json')
-    return res.status(200).json(carritoNuevo)
+        let arrayFlat = arrayProductos.flat(Infinity)
+
+        let indiceProducto = arrayFlat.forEach(async item => {
+
+            let products = await ProductosMongoManager.getBy({ _id: item.product })
+
+            console.log(products)
+            
+            if (
+                item &&
+                typeof item === 'object' &&
+                item.hasOwnProperty('product') &&
+                item.product &&
+                typeof item.product === 'string' &&
+                typeof products !== 'string'
+            ) {
+
+                return indiceProducto = true
+            } else {
+                return indiceProducto = false
+            }
+        })
+
+        let cart = await CarritosMongoManager.getBy({ _id: cid })
+
+        if (!cart) {
+            res.setHeader('Content-Type', 'application/json')
+            return res.status(400).json({ error: `El ID de carrito ingresado no existe` })
+        }
+
+        console.log(indiceProducto)
+
+        let vaciarCarrito = await CarritosMongoManager.update(cid, { products: [] }, { new: true })
+
+        let carritoNuevo = await CarritosMongoManager.update(cid, { products: arrayFlat })
+
+        res.setHeader('Content-Type', 'application/json')
+        return res.status(200).json(carritoNuevo)
+
+    } catch (error) {
+
+        res.setHeader('Content-Type', 'application/json')
+        return res.status(401).json({ error: error.message })
+    }
+
 })
 
 router.delete('/:cid', async (req, res) => {

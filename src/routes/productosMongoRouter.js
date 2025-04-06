@@ -51,7 +51,7 @@ router.post('/', async (req,res)=>{
 
     let {title, description, code, price, status, stock, category, thumbnails} = req.body
 
-    if (!title||!code||!price){
+    if (!title||!code||!price||!status||!stock||!description||!category||!thumbnails){
         res.setHeader('Content-Type', 'application/json')
         return res.status(400).json({error:`Las propiedades title, code y price son requeridas`})
     }
@@ -59,15 +59,6 @@ router.post('/', async (req,res)=>{
     try {
 
         let existe = await ProductosMongoManager.getBy({code})
-
-        let productoDuplicado = await ProductosMongoManager.getBy({title})    
-
-        if(productoDuplicado) {        
-    
-            req.io.emit("errorCarga1", productoDuplicado)
-            res.setHeader('Content-Type', 'application/json')
-            return res.status(400).json({ payload: `Ya existe en la base de datos un producto con nombre ${productoDuplicado.title}` })
-        }
     
         if(existe){
 
@@ -92,26 +83,30 @@ router.put('/:id', async (req,res)=>{
     let aModificar = req.body
     let {id} = req.params
 
-    let productoDuplicado = await ProductosMongoManager.getBy({title:aModificar.title})
+    if(isValidObjectId(id)){
+
+        res.setHeader('Content-Type', 'application/json')
+        return res.status(400).json({error:`Ingrese un ID valido de MongoDB`})
+
+    }
+
+    let buscarProducto = await ProductosMongoManager.getBy({_id:id})
+    
     let existe = await ProductosMongoManager.getBy({title:aModificar.code})
 
-    if(productoDuplicado) {        
+    if(buscarProducto) {        
 
-        req.io.emit("errorCarga1", productoDuplicado)
+        req.io.emit("errorCarga1", buscarProducto)
         res.setHeader('Content-Type', 'application/json')
-        return res.status(400).json({ payload: `Ya existe en la base de datos un producto con nombre ${productoDuplicado.title}` })
+        return res.status(404).json({ payload: `No existe ningun producto con ID ${id} en la base de datos` })
     }
 
     if(existe){
 
         req.io.emit("errorCarga2", existe)
         res.setHeader('Content-Type', 'application/json')
-        return res.status(400).json({error:`Ya existe un producto con el codigo ${aModificar.code} en la base de datos`})
-    }
+        return res.status(401).json({error:`Ya existe un producto con el codigo ${aModificar.code} en la base de datos`})
 
-    if(!isValidObjectId(id)){
-        res.setHeader('Content-Type', 'application/json')
-        return res.status(400).json({error:`Ingrese un id valido de MongoDB`})
     }
 
     try {
@@ -123,7 +118,7 @@ router.put('/:id', async (req,res)=>{
         return res.status(200).json({productoModificado})  
 
     } catch (error) {
-        
+        console.log(error.message)
     }
 })
 
@@ -133,7 +128,7 @@ router.delete('/:id', async(req,res)=>{
     
     if(!isValidObjectId(id)){
         res.setHeader('Content-Type', 'application/json')
-        return res.status(400).json({error:`Ingrese un id valido de MongoDB`})
+        return res.status(401).json({error:`Ingrese un id valido de MongoDB`})
     }
 
     let existe = await ProductosMongoManager.getBy({_id:id})
@@ -141,7 +136,7 @@ router.delete('/:id', async(req,res)=>{
     if(!existe) {
 
         res.setHeader('Content-Type', 'application/json')
-        return res.status(400).json({error:`No existe ningun producto con id ${id} en la base de datos`})
+        return res.status(404).json({error:`No existe ningun producto con id ${id} en la base de datos`})
 
     }
 
