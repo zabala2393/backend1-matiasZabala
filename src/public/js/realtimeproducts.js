@@ -16,9 +16,10 @@ socket.on("quitarProducto", productById => {
     window.location.reload()
 })
 
-socket.on("errorCarga2", codigoDuplicado=>{
+socket.on("errorCarga2", code=>{
 
-    alert(`Ya existe un producto con el codigo ${codigoDuplicado.code} con ID ${codigoDuplicado._id}`)
+    window.location.reload()
+    alert(`Ya existe un producto con el codigo ${code}`)
 
 })
 

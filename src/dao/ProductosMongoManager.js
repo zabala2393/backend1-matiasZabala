@@ -1,9 +1,22 @@
 import { productosModelo } from "./models/productosModelo.js";
 
 export class ProductosMongoManager{
-    static async get(page=1, limit=4){
-        return await productosModelo.paginate({}, {page, limit, lean:true})
+    static async get(page=1, limit=4, sort="asc"){ 
+
+        try {
+            let options = {
+              page: page,
+              limit: limit,
+              sort: { price: sort === "asc" ? 1 : -1 },
+              lean:true
+            };
+
+        return await productosModelo.paginate({},options)
+    } catch{
+        console.log(error.message)
+
     }
+}
 
     static async getBy(filtro={}){
         return await productosModelo.findOne(filtro).lean()
