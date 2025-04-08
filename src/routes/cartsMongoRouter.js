@@ -64,9 +64,18 @@ router.post("/:cid/product/:pid", async (req, res) => {
 
     let cantidadIngresada = parseFloat(quantity)
 
+
+    if (!isValidObjectId(cid) || !isValidObjectId(pid)) {
+
+        res.setHeader('Content-Type', 'application/json')
+        return res.status(400).json({ error: `Ingrese un ID valido de MongoDB` })
+
+    }
+
     let productoObjetivo = await ProductosMongoManager.getBy({ _id: pid })
 
     let carritoObjetivo = await CarritosMongoManager.getBy({ _id: cid })
+
 
     if (!productoObjetivo || !carritoObjetivo) {
         res.setHeader('Content-Type', 'application/json')
@@ -215,63 +224,69 @@ router.put('/:cid/product/:pid', async (req, res) => {
 
 router.delete("/:cid/product/:pid", async (req, res) => {
 
-    let { cid, pid } = req.params
+    try {
 
-    let cart = await CarritosMongoManager.getBy({ _id: cid })
+        let { cid, pid } = req.params
 
-    let product = await ProductosMongoManager.getBy({ _id: pid })
-
-    if (!isValidObjectId(cid)) {
-        res.setHeader('Content-Type', 'application/json')
-        return res.status(401).json({ error: `Ingrese un ID valido de MongoDB` })
-    }
-
-    if (!product || !cart) {
-        res.setHeader('Content-Type', 'application/json')
-        return res.status(401).json({ error: `Carrito no valido o producto no existente en carrito` })
-    }
-
-    let cartFlat = cart.products.flat(Infinity)
-
-    let productosIndividuales = JSON.stringify(cartFlat, null)
-
-    let existe = productosIndividuales.match(product._id)
-
-    if (existe) {
-
-        const indiceProducto = cartFlat.findIndex(item => {
-            if (
-                item &&
-                typeof item === 'object' &&
-                item.hasOwnProperty('product') &&
-                item.product &&
-                typeof item.product === 'object' &&
-                item.product.hasOwnProperty('_id')
-
-            ) {
-
-                return String(item.product._id) === pid
-            }
+        if (!isValidObjectId(cid) || !isValidObjectId(pid)) {
+            res.setHeader('Content-Type', 'application/json')
+            return res.status(401).json({ error: `Ingrese IDs validos de MongoDB` })
         }
-        )
 
-        console.log(indiceProducto)
+        let cart = await CarritosMongoManager.getBy({ _id: cid })
 
-        let borrarProducto = cart.products.splice(indiceProducto, 1)
+        let product = await ProductosMongoManager.getBy({ _id: pid })
 
-        let actualizarCarrito = await CarritosMongoManager.update(cid, cart)
+        if (!cart) {
+            res.setHeader('Content-Type', 'application/json')
+            return res.status(400).json({ error: `Carrito no valido` })
+        }
 
-        console.log(actualizarCarrito)
+        if (!product) {
 
+            res.setHeader('Content-Type', 'application/json')
+            return res.status(404).json({ error: `Producto no existe en la base de datos` })
+        }
 
-        res.setHeader('Content-Type', 'application/json')
-        res.status(401).json({ payload: `Producto ${product.title} eliminado del carrito con exito` })
-        return res.render("cartId")
+        let cartFlat = cart.products.flat(Infinity)
 
-    } else {
+        let productosIndividuales = JSON.stringify(cartFlat, null)
 
-        res.setHeader('Content-Type', 'application/json')
-        return res.status(401).json({ error: `Carrito no valido o producto no existente en carrito` })
+        let existe = productosIndividuales.match(product._id)
+
+        if (existe) {
+
+            const indiceProducto = cartFlat.findIndex(item => {
+                if (
+                    item &&
+                    typeof item === 'object' &&
+                    item.hasOwnProperty('product') &&
+                    item.product &&
+                    typeof item.product === 'object' &&
+                    item.product.hasOwnProperty('_id')
+
+                ) {
+
+                    return String(item.product._id) === pid
+                }
+            }
+            )
+
+            let borrarProducto = cart.products.splice(indiceProducto, 1)
+
+            let actualizarCarrito = await CarritosMongoManager.update(cid, cart)
+
+            res.setHeader('Content-Type', 'application/json')
+            res.status(200).json({ payload: `Producto ${product.title} eliminado del carrito con exito` })
+        } else {
+            res.setHeader('Content-Type', 'application/json')
+            res.status(404).json({ payload: `El producto ingresado no existe en el carrito` })
+        }
+
+    } catch (error) {
+
+        console.log(error.message)
+
     }
 
 
@@ -279,42 +294,54 @@ router.delete("/:cid/product/:pid", async (req, res) => {
 
 router.put("/:cid", async (req, res) => {
 
-    let product, quantity = req.body
-
     let { cid } = req.params
 
     if (!isValidObjectId(cid)) {
 
         res.setHeader('Content-Type', 'application/json')
-        return res.status(401).json({ message: "El ID de carrito no es valido" })
+        return res.status(401).json({ message: "Ingrese un ID valido de MongoDB" })
     }
 
     try {
 
-        let arrayProductos = Array(req.body)
+        let arrayProductos = req.body.products
 
-        let arrayFlat = arrayProductos.flat(Infinity)
+        let cantidades = req.body.products
 
-        let indiceProducto = arrayFlat.forEach(async item => {
-
-            let products = await ProductosMongoManager.getBy({ _id: item.product })
-
-            console.log(products)
-            
-            if (
-                item &&
-                typeof item === 'object' &&
-                item.hasOwnProperty('product') &&
-                item.product &&
-                typeof item.product === 'string' &&
-                typeof products !== 'string'
-            ) {
-
-                return indiceProducto = true
-            } else {
-                return indiceProducto = false
+        async function validateArray(array) {
+            if (!array || array.length === 0) {
+                return true
             }
-        })
+
+            for (const item of array) {
+                try {
+
+                    const products = await ProductosMongoManager.getBy({ _id: item.product })
+
+                    if(!item.quantity){
+                        return false
+                    }
+
+                    if (!products || products.length === 0) {
+
+                        return false
+                    }
+
+                } catch (error) {
+                    console.error("Error al consultar la base de datos MongoDB:", error);
+                    return false
+                }
+            }
+
+            return true
+        }
+
+        let productosValidos = await validateArray(arrayProductos)
+
+        if (!productosValidos) {
+            res.setHeader('Content-Type', 'application/json')
+            return res.status(404).json({ error: `Los productos o cantidades no son correctos! Revise los datos ingresados` })
+        }
 
         let cart = await CarritosMongoManager.getBy({ _id: cid })
 
@@ -323,11 +350,9 @@ router.put("/:cid", async (req, res) => {
             return res.status(400).json({ error: `El ID de carrito ingresado no existe` })
         }
 
-        console.log(indiceProducto)
-
         let vaciarCarrito = await CarritosMongoManager.update(cid, { products: [] }, { new: true })
 
-        let carritoNuevo = await CarritosMongoManager.update(cid, { products: arrayFlat })
+        let carritoNuevo = await CarritosMongoManager.update(cid, { products: arrayProductos })
 
         res.setHeader('Content-Type', 'application/json')
         return res.status(200).json(carritoNuevo)
@@ -349,6 +374,13 @@ router.delete('/:cid', async (req, res) => {
         if (!isValidObjectId(cid)) {
             res.setHeader('Content-Type', 'application/json')
             return res.status(400).json({ error: `Ingrese un ID valido de MongoDB` })
+        }
+
+        let cart = await CarritosMongoManager.getBy({_id:cid})
+
+        if(!cart){
+            res.setHeader('Content-Type', 'application/json')
+            return res.status(404).send({ payload: `No existe carrito con este ID` })
         }
 
         let vaciarCarrito = await CarritosMongoManager.update(cid, { products: [] }, { new: true })
