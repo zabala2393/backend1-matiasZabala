@@ -9,29 +9,29 @@ router.get("/", async (req, res) => {
 
     try {
 
-        let {page, limit, sort} = req.query
+        let { page, limit, sort } = req.query
 
         let query = {}
 
         for (const filtro in req.query) {
-            if(filtro !== 'page' && filtro !== 'limit' && filtro !== 'sort') {
+            if (filtro !== 'page' && filtro !== 'limit' && filtro !== 'sort') {
                 query[filtro] = req.query[filtro]
             }
         }
 
-        if(!page){
-            page=1
+        if (!page) {
+            page = 1
         }
 
-        if(!limit){
-            limit=4
+        if (!limit) {
+            limit = 4
         }
 
-        if(!sort){
-            sort="desc"
+        if (!sort) {
+            sort = "desc"
         }
 
-        let { docs: products, status, payload, prevLink, nextLink, totalPages, hasNextPage, nextPage, hasPrevPage, prevPage} = await ProductosMongoManager.get(page, limit, sort, query)
+        let { docs: products, status, payload, prevLink, nextLink, totalPages, hasNextPage, nextPage, hasPrevPage, prevPage } = await ProductosMongoManager.get(page, limit, sort, query)
 
         res.render("productsDatabase", { products, totalPages, hasNextPage, nextPage, hasNextPage, hasPrevPage, prevPage })
     } catch (error) {
@@ -43,13 +43,13 @@ router.get("/", async (req, res) => {
 
 router.post('/realtimeproducts', async (req, res) => {
 
-    let { title, description, code, price, status, stock, category, thumbnails } = req.body
-
-    let {docs:products} = await ProductosMongoManager.get()
-
     try {
 
-        let stringProductos = JSON.stringify(products) 
+        let { title, description, code, price, status, stock, category, thumbnails } = req.body
+
+        let { docs: products } = await ProductosMongoManager.get()
+
+        let stringProductos = JSON.stringify(products)
 
         let product = { title, description, code, price, status, stock, category, thumbnails }
 
@@ -60,7 +60,7 @@ router.post('/realtimeproducts', async (req, res) => {
         return res.render("realTimeProducts", { products })
 
     } catch (error) {
-        
+
         req.io.emit("errorCarga2", code)
         return
     }
@@ -70,51 +70,56 @@ router.post('/realtimeproducts', async (req, res) => {
 
 router.get('/realtimeproducts', async (req, res) => {
 
+    try {
 
-        try {
+        let { page, limit, sort } = req.query
 
-            let {page, limit, sort} = req.query
-    
-            if(!page){
-                page=1
+        let query = {}
+
+        for (const filtro in req.query) {
+            if (filtro !== 'page' && filtro !== 'limit' && filtro !== 'sort') {
+                query[filtro] = req.query[filtro]
             }
-    
-            if(!limit){
-                limit=4
-            }
-    
-            if(!sort){
-                sort="desc"
-            }
-    
-    
-            let { docs: products, status, payload, prevLink, nextLink, totalPages, hasNextPage, nextPage, hasPrevPage, prevPage} = await ProductosMongoManager.get(page, limit, sort)
-    
-            res.render("realTimeProducts", { products, totalPages, hasNextPage, nextPage, hasNextPage, hasPrevPage, prevPage })
-        } catch (error) {
-            res.status(500).json({ error: error.message })
         }
 
+        if (!page) {
+            page = 1
+        }
 
+        if (!limit) {
+            limit = 4
+        }
+
+        if (!sort) {
+            sort = "desc"
+        }
+
+        let { docs: products, status, payload, prevLink, nextLink, totalPages, hasNextPage, nextPage, hasPrevPage, prevPage } = await ProductosMongoManager.get(page, limit, sort, query)
+
+        res.render("realTimeProducts", { products, totalPages, hasNextPage, nextPage, hasNextPage, hasPrevPage, prevPage })
+    } catch (error) {
+        res.status(500).json({ error: error.message })
+    }
 })
 
 router.delete('/realtimeproducts', async (req, res) => {
-try {
-    let products = await ProductosMongoManager.get()
+    try {
 
-    let productToDelete = products.find(p => p.id == id)
+        let products = await ProductosMongoManager.get()
 
-    let quitarProducto = await ProductosMongoManager.findByIdAndDelete(id, {})
+        let productToDelete = products.find(p => p.id == id)
 
-    req.io.emit("quitarProducto", productToDelete)
+        let quitarProducto = await ProductosMongoManager.findByIdAndDelete(id, {})
 
-    return res.render("realTimeProducts", { products })
+        req.io.emit("quitarProducto", productToDelete)
 
-} catch (error) {
+        return res.render("realTimeProducts", { products })
 
-    console.log(error.message)
-    
-}
+    } catch (error) {
+
+        res.status(500).json({ error: error.message })
+
+    }
 
 
 })
@@ -140,9 +145,12 @@ router.get("/carts/:cid", async (req, res) => {
 
         let inCart = cart.products
         res.render("cartId", { cid, inCart })
+
     } catch (error) {
+
         console.log(error.message)
         res.status(500).send("Error al obterner el carrito")
+        
     }
 
 
