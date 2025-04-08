@@ -1,6 +1,6 @@
 const Router = require('express').Router
 const router = Router()
-const { isValidObjectId, Types } = require("mongoose")
+const { isValidObjectId} = require("mongoose")
 const { CarritosMongoManager } = require('../dao/CarritosMongoManager')
 const { ProductosMongoManager } = require('../dao/ProductosMongoManager')
 
@@ -306,8 +306,6 @@ router.put("/:cid", async (req, res) => {
 
         let arrayProductos = req.body.products
 
-        let cantidades = req.body.products
-
         async function validateArray(array) {
             if (!array || array.length === 0) {
                 return true
@@ -336,18 +334,18 @@ router.put("/:cid", async (req, res) => {
             return true
         }
 
-        let productosValidos = await validateArray(arrayProductos)
-
-        if (!productosValidos) {
-            res.setHeader('Content-Type', 'application/json')
-            return res.status(404).json({ error: `Los productos o cantidades no son correctos! Revise los datos ingresados` })
-        }
-
         let cart = await CarritosMongoManager.getBy({ _id: cid })
 
         if (!cart) {
             res.setHeader('Content-Type', 'application/json')
             return res.status(400).json({ error: `El ID de carrito ingresado no existe` })
+        }
+
+        let productosValidos = await validateArray(arrayProductos)
+
+        if (!productosValidos) {
+            res.setHeader('Content-Type', 'application/json')
+            return res.status(404).json({ error: `Los productos no existen en base de datos / Cantidades enviadas son incorrectas! Revise los datos ingresados` })
         }
 
         let vaciarCarrito = await CarritosMongoManager.update(cid, { products: [] }, { new: true })

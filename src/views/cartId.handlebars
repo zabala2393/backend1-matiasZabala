@@ -10,17 +10,29 @@
 
     <li>
 
-        Nombre: {{title}} <br>
-        Precio: ${{price}} <br>
-        Categoria: {{category}} <br>
-        ID: {{_id}} <br>
-        Codigo: {{code}} <br>
+        {{#if product}}
+
+        Nombre: {{product.title}} <br>
+        Precio: ${{product.price}} <br>
+        Categoria: {{product.category}} <br>
+        ID: {{product._id}} <br>
+        Codigo: {{product.code}} <br>
+
+        {{else}}
+
+        <h2>Producto no encontrado</h2>
+
+        {{/if}}
 
     </li>
 
     {{/each}}
     
 </ul>
+
+{{else}}
+
+<p>El carrito esta vacio</p>
 
 {{/if}}
 

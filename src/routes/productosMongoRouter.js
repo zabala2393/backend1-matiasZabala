@@ -53,7 +53,7 @@ router.post('/', async (req,res)=>{
 
     if (!title||!code||!price||!status||!stock||!description||!category||!thumbnails){
         res.setHeader('Content-Type', 'application/json')
-        return res.status(400).json({error:`Las propiedades title, code y price son requeridas`})
+        return res.status(400).json({error:`Todas las propiedades son requeridas`})
     }
 
     try {
@@ -74,27 +74,30 @@ router.post('/', async (req,res)=>{
     } catch (error) {
 
         console.log(error.message)
+        res.status(400).send(error.message)
         
     }
 })
 
 router.put('/:id', async (req,res)=>{
 
+    try {
+
     let aModificar = req.body
     let {id} = req.params
 
-    if(isValidObjectId(id)){
-
+    if(!isValidObjectId(id)){
         res.setHeader('Content-Type', 'application/json')
         return res.status(400).json({error:`Ingrese un ID valido de MongoDB`})
-
     }
 
     let buscarProducto = await ProductosMongoManager.getBy({_id:id})
-    
-    let existe = await ProductosMongoManager.getBy({title:aModificar.code})
 
-    if(buscarProducto) {        
+    console.log(buscarProducto)
+    
+    let existe = await ProductosMongoManager.getBy({code:aModificar.code})
+
+    if(!buscarProducto) {        
 
         req.io.emit("errorCarga1", buscarProducto)
         res.setHeader('Content-Type', 'application/json')
@@ -108,17 +111,13 @@ router.put('/:id', async (req,res)=>{
         return res.status(401).json({error:`Ya existe un producto con el codigo ${aModificar.code} en la base de datos`})
 
     }
-
-    try {
-
-    console.log({aModificar})
-
         let productoModificado = await ProductosMongoManager.update(id, aModificar)
         res.setHeader('Content-Type', 'application/json')
         return res.status(200).json({productoModificado})  
 
     } catch (error) {
         console.log(error.message)
+        res.status(500).send("Error de servidor, intente de nuevo")
     }
 })
 
@@ -128,7 +127,7 @@ router.delete('/:id', async(req,res)=>{
     
     if(!isValidObjectId(id)){
         res.setHeader('Content-Type', 'application/json')
-        return res.status(401).json({error:`Ingrese un id valido de MongoDB`})
+        return res.status(400).json({error:`Ingrese un id valido de MongoDB`})
     }
 
     let existe = await ProductosMongoManager.getBy({_id:id})
@@ -148,11 +147,12 @@ router.delete('/:id', async(req,res)=>{
 
         req.io.emit("quitarProducto", productDelete)
 
-        return res.status(200).json({productDelete}) 
+        return res.status(200).json(`${productDelete.title} eliminado de la base de datos`) 
     
         
     } catch (error) {
         console.log(error.message)
+        res.status(500).json({error:`Error interno de servidor, intente de nuevo mas tarde`})
     }
 })
 

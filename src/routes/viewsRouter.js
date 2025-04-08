@@ -11,6 +11,14 @@ router.get("/", async (req, res) => {
 
         let {page, limit, sort} = req.query
 
+        let query = {}
+
+        for (const filtro in req.query) {
+            if(filtro !== 'page' && filtro !== 'limit' && filtro !== 'sort') {
+                query[filtro] = req.query[filtro]
+            }
+        }
+
         if(!page){
             page=1
         }
@@ -23,8 +31,7 @@ router.get("/", async (req, res) => {
             sort="desc"
         }
 
-
-        let { docs: products, status, payload, prevLink, nextLink, totalPages, hasNextPage, nextPage, hasPrevPage, prevPage} = await ProductosMongoManager.get(page, limit, sort)
+        let { docs: products, status, payload, prevLink, nextLink, totalPages, hasNextPage, nextPage, hasPrevPage, prevPage} = await ProductosMongoManager.get(page, limit, sort, query)
 
         res.render("productsDatabase", { products, totalPages, hasNextPage, nextPage, hasNextPage, hasPrevPage, prevPage })
     } catch (error) {
@@ -130,11 +137,12 @@ router.get("/carts/:cid", async (req, res) => {
     }
 
     try {
-        let { docs: carrito } = await CarritosMongoManager.get({ _id: cid })
+
         let inCart = cart.products
-        res.render("cartId", { carrito, cid, inCart })
+        res.render("cartId", { cid, inCart })
     } catch (error) {
         console.log(error.message)
+        res.status(500).send("Error al obterner el carrito")
     }
 
 

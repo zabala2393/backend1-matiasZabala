@@ -3,7 +3,7 @@ import { carritoModelo } from "./models/carritoModelo.js";
 export class CarritosMongoManager{
 
     static async get(){
-        return await carritoModelo.find().lean().populate("products.product", 'title description code price status stock category thumbnails' ).sort({price:1, title:1})
+        return await carritoModelo.find().lean().populate("products.product", 'title description code price status stock category thumbnails' )
     }
 
     static async getBy(filtro={}){
